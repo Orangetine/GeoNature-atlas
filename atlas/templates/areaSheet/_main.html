@@ -60,6 +60,7 @@
                 {% else %}
                     <h4><b>{{ areaInfos.typeName }} - {{ areaInfos.areaName }}</b></h4>
                 {% endif %}
+                {% include 'templates/areaSheet/avanced_stat_btn.html'%}
                 {% include 'templates/core/statHierarchy.html' %}
             </div>
             {% include 'templates/core/listTaxons.html' %}
