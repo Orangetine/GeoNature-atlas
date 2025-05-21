@@ -31,6 +31,7 @@ def create_app():
 
     app.config.update(config_valid)
     app.config.update(config_secret_valid)
+    app.config["APPLICATION_ROOT"] = "/atlas"
 
     db.init_app(app)
     cache.init_app(app)
@@ -56,9 +57,8 @@ def create_app():
         from atlas.atlasAPI import api
 
         app.register_blueprint(api, url_prefix="/api")
-
-        if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
-            os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
+        # if "SCRIPT_NAME" not in os.environ and "APPLICATION_ROOT" in app.config:
+        #     os.environ["SCRIPT_NAME"] = app.config["APPLICATION_ROOT"].rstrip("/")
         app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 
         app.wsgi_app = SharedDataMiddleware(
