@@ -113,9 +113,7 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
     @api.route("/observations/<id_area>/<int(signed=True):cd_ref>", methods=["GET"])
     def getObservationsAreaTaxonAPI(id_area, cd_ref):
         session = db.session
-        observations = vmObservationsRepository.getObservationTaxonArea(
-            session, id_area, cd_ref
-        )
+        observations = vmObservationsRepository.getObservationTaxonArea(session, id_area, cd_ref)
         return jsonify(observations)
 
 
@@ -139,9 +137,7 @@ def get_observations_area_api(id_area):
             connection, str(id_area)
         )
     else:
-        observations = vmObservationsRepository.getObservationsByArea(
-            connection, id_area, limit
-        )
+        observations = vmObservationsRepository.getObservationsByArea(connection, id_area, limit)
 
     connection.close()
     return jsonify(observations)
@@ -179,18 +175,14 @@ def main_stat():
 @cache.cached()
 def rank_stat():
     session = db.session
-    return jsonify(
-        vmObservationsRepository.genericStat(session, current_app.config["RANG_STAT"])
-    )
+    return jsonify(vmObservationsRepository.genericStat(session, current_app.config["RANG_STAT"]))
 
 
 @api.route("/area_chart_values/<id_area>", methods=["GET"])
 def get_area_chart_valuesAPI(id_area):
     session = db.session
     connection = db.engine.connect()
-    species_by_taxonomic_group = vmAreasRepository.get_species_by_taxonomic_group(
-        session, id_area
-    )
+    species_by_taxonomic_group = vmAreasRepository.get_species_by_taxonomic_group(session, id_area)
     observations_by_taxonomic_group = vmAreasRepository.get_nb_observations_taxonomic_group(
         session, id_area
     )
