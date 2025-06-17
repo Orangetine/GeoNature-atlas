@@ -8,7 +8,9 @@
         </style>
     {% endif %}
     <div class="bg-white border-end p-2">
-
+        <button id="exportCsvBtn" class="btn btn-outline-primary btn-sm mb-2" data-filename="liste_taxons_{{ area_name|replace(' ', '_') }}.csv">
+            <i class="fas fa-download"></i> Exporter la liste en CSV
+        </button>
         <div class="col">
             <input id="taxonInput" type="text" class="form-control form-control-sm" placeholder="{{ _('filter.species') }}" />
         </div>

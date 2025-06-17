@@ -18,7 +18,7 @@ from flask import (
 from flask_babel import gettext
 
 from atlas.env import db
-from atlas import utils
+from atlas.modeles import utils
 from atlas.modeles.entities import vmTaxons, vmAreas
 from atlas.modeles.repositories import (
     vmOrganismsRepository,
@@ -376,6 +376,7 @@ def ficheArea(id_area):
         areaInfos=area,
         DISPLAY_EYE_ON_LIST=True,
         id_area=id_area,
+        area_name = utils.deleteAccent(area["areaName"])
     )
 
 
