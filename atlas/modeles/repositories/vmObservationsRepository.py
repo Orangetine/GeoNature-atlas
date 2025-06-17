@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import current_app
 from geojson import Feature, FeatureCollection
-from sqlalchemy.sql import text, func, or_, literal, cast
+from sqlalchemy.sql import func, or_, literal, cast
 from sqlalchemy import Interval, distinct, select
 from sqlalchemy.dialects.postgresql import array
 
@@ -95,7 +95,7 @@ def lastObservations(session, mylimit, idPhoto):
     return obsList
 
 
-def lastObservationsArea(session, obs_limit, id_area):
+def getObservationsByArea(session, id_area, limit):
     req = (
         select(
             VmObservations,
@@ -112,6 +112,9 @@ def lastObservationsArea(session, obs_limit, id_area):
         .filter(VmCorAreaSynthese.id_area == id_area)
         .order_by(VmObservations.dateobs.desc())
     )
+    if limit:
+        req = req.limit(limit)
+
     results = session.execute(req).mappings().all()
     obsList = list()
     for row in results:
