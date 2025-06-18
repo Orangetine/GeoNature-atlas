@@ -22,18 +22,16 @@ def searchTaxonAPI():
     session = db.session
     search = request.args.get("search", "")
     limit = request.args.get("limit", 50)
-    results = vmSearchTaxonRepository.listeTaxonsSearch(session, search, limit)
+    results = vmSearchTaxonRepository.listeTaxonsSearch(search, limit)
     session.close()
     return jsonify(results)
 
 
 @api.route("/searchArea", methods=["GET"])
 def searchAreaAPI():
-    session = db.session
     search = request.args.get("search", "")
     limit = request.args.get("limit", 50)
-    results = vmAreasRepository.searchAreas(session, search, limit)
-    session.close()
+    results = vmAreasRepository.searchAreas(search, limit)
     return jsonify(results)
 
 
@@ -48,7 +46,7 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
         """
         session = db.session
         observations = {
-            "point": vmObservationsRepository.searchObservationsChilds(session, cd_ref),
+            "point": vmObservationsRepository.searchObservationsChilds(cd_ref),
             "maille": vmObservationsMaillesRepository.getObservationsMaillesChilds(
                 session, cd_ref
             ),
@@ -80,7 +78,7 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
     @api.route("/observationsPoint/<int(signed=True):cd_ref>", methods=["GET"])
     def getObservationsPointAPI(cd_ref):
         session = db.session
-        observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
+        observations = vmObservationsRepository.searchObservationsChilds(cd_ref)
         session.close()
         return jsonify(observations)
 
@@ -104,7 +102,7 @@ def getObservationsGenericApi(cd_ref: int):
             year_max=request.args.get("year_max"),
         )
     else:
-        observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
+        observations = vmObservationsRepository.searchObservationsChilds(cd_ref)
     session.close()
 
     return jsonify(observations)
@@ -115,7 +113,7 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
     @api.route("/observations/<id_area>/<int(signed=True):cd_ref>", methods=["GET"])
     def getObservationsAreaTaxonAPI(id_area, cd_ref):
         session = db.session
-        observations = vmObservationsRepository.getObservationTaxonArea(session, id_area, cd_ref)
+        observations = vmObservationsRepository.getObservationTaxonArea(id_area, cd_ref)
         return jsonify(observations)
 
 
@@ -139,16 +137,14 @@ def get_observations_area_api(id_area):
             session, str(id_area)
         )
     else:
-        observations = vmObservationsRepository.getObservationsByArea(session, id_area, limit)
+        observations = vmObservationsRepository.getObservationsByArea(id_area, limit)
 
     return jsonify(observations)
 
 
 @api.route("/photoGroup/<group>", methods=["GET"])
 def getPhotosGroup(group):
-    session = db.session
     photos = vmMedias.getPhotosGalleryByGroup(
-        session,
         current_app.config["ATTR_MAIN_PHOTO"],
         current_app.config["ATTR_OTHER_PHOTO"],
         group,
@@ -158,9 +154,8 @@ def getPhotosGroup(group):
 
 @api.route("/photosGallery", methods=["GET"])
 def getPhotosGallery():
-    session = db.session
     photos = vmMedias.getPhotosGallery(
-        session, current_app.config["ATTR_MAIN_PHOTO"], current_app.config["ATTR_OTHER_PHOTO"]
+        current_app.config["ATTR_MAIN_PHOTO"], current_app.config["ATTR_OTHER_PHOTO"]
     )
     return jsonify(photos)
 
@@ -168,29 +163,27 @@ def getPhotosGallery():
 @api.route("/main_stat", methods=["GET"])
 @cache.cached()
 def main_stat():
-    session = db.session
-    return vmObservationsRepository.statIndex(session)
+    return vmObservationsRepository.statIndex()
 
 
 @api.route("/rank_stat", methods=["GET"])
 @cache.cached()
 def rank_stat():
-    session = db.session
-    return jsonify(vmObservationsRepository.genericStat(session, current_app.config["RANG_STAT"]))
+    return jsonify(vmObservationsRepository.genericStat(current_app.config["RANG_STAT"]))
 
 
 @api.route("/area_chart_values/<id_area>", methods=["GET"])
 def get_area_chart_valuesAPI(id_area):
     session = db.session
-    species_by_taxonomic_group = vmAreasRepository.get_species_by_taxonomic_group(session, id_area)
+    species_by_taxonomic_group = vmAreasRepository.get_species_by_taxonomic_group(id_area)
     observations_by_taxonomic_group = vmAreasRepository.get_nb_observations_taxonomic_group(
-        session, id_area
+        id_area
     )
     nb_species_by_organism = vmOrganismsRepository.get_species_by_organism_on_area(
-        session, id_area
+        id_area
     )
     observations_by_organism = vmOrganismsRepository.get_nb_observations_by_organism_on_area(
-        session, id_area
+        id_area
     )
 
     session.close()

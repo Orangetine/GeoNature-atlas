@@ -1,16 +1,12 @@
 # coding: utf-8
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
 from geoalchemy2 import Geometry
+from atlas.env import db
 import datetime
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class Syntheseff(Base):
+class Syntheseff(db.Model):
     __tablename__ = "syntheseff"
     __table_args__ = {"schema": "synthese"}
 

@@ -1,18 +1,13 @@
 # -*- coding:utf-8 -*-
-
 from sqlalchemy import String, Float, Text, ForeignKey
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
+from atlas.env import db
 
 from typing import List
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmTaxons(Base):
+class VmTaxons(db.Model):
     __tablename__ = "vm_taxons"
     __table_args__ = {"schema": "atlas"}
 
@@ -41,12 +36,9 @@ class VmTaxons(Base):
     attributs: Mapped[List["VmCorTaxonAttribut"]] = relationship(
         "VmCorTaxonAttribut", back_populates="taxon"
     )
-    organisms: Mapped[List["VmCorTaxonOrganism"]] = relationship(
-        "VmCorTaxonOrganism", back_populates="taxon"
-    )
 
 
-class VmCorTaxonAttribut(Base):
+class VmCorTaxonAttribut(db.Model):
     __tablename__ = "vm_cor_taxon_attribut"
     __table_args__ = {"schema": "atlas"}
 
@@ -56,26 +48,7 @@ class VmCorTaxonAttribut(Base):
     taxon: Mapped["VmTaxons"] = relationship("VmTaxons", back_populates="attributs")
 
 
-class VmCorTaxonOrganism(Base):
-    __tablename__ = "vm_cor_taxon_organism"
-    __table_args__ = {"schema": "atlas"}
-
-    cd_ref: Mapped[int] = mapped_column(ForeignKey("atlas.vm_taxons.cd_ref"), primary_key=True)
-    id_organism: Mapped[int] = mapped_column(primary_key=True)
-
-    nb_observations: Mapped[int] = mapped_column()
-    nom_organism: Mapped[str] = mapped_column(String(500))
-    adress_organism: Mapped[str] = mapped_column(String(128))
-    cp_organism: Mapped[str] = mapped_column(String(5))
-    ville_organism: Mapped[str] = mapped_column(String(100))
-    tel_organism: Mapped[str] = mapped_column(String(14))
-    email_organism: Mapped[str] = mapped_column(String(100))
-    url_organism: Mapped[str] = mapped_column(String(255))
-    url_logo: Mapped[str] = mapped_column(String(255))
-    taxon: Mapped["VmTaxons"] = relationship("VmTaxons", back_populates="organisms")
-
-
-class VmTaxonsMostView(Base):
+class VmTaxonsMostView(db.Model):
     __tablename__ = "vm_taxons_plus_observes"
     __table_args__ = {"schema": "atlas"}
 

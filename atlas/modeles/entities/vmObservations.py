@@ -2,17 +2,13 @@
 from geoalchemy2.types import Geometry
 from sqlalchemy import Integer, String, Text, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
+from atlas.env import db
 
 from typing import List
 import datetime
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmObservations(Base):
+class VmObservations(db.Model):
     __tablename__ = "vm_observations"
     __table_args__ = {"schema": "atlas"}
 
@@ -39,7 +35,7 @@ class VmObservations(Base):
         }
 
 
-class VmObservationsMailles(Base):
+class VmObservationsMailles(db.Model):
     """
     Table des observations par maille
     """

@@ -1,14 +1,10 @@
 # coding: utf-8
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
+from atlas.env import db
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmSearchTaxon(Base):
+class VmSearchTaxon(db.Model):
     __tablename__ = "vm_search_taxon"
     __table_args__ = {"schema": "atlas"}
 

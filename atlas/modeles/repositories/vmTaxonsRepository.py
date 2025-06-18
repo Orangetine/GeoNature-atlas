@@ -9,9 +9,10 @@ from atlas.modeles.entities.vmTaxons import VmTaxons
 from atlas.modeles.entities.tBibTaxrefRang import TBibTaxrefRang
 
 from atlas.modeles import utils
+from atlas.env import db
 
 
-def getTaxonsTerritory(session):
+def getTaxonsTerritory():
     id_type = current_app.config["ATTR_MAIN_PHOTO"]
     req = (
         select(
@@ -45,7 +46,7 @@ def getTaxonsTerritory(session):
         .order_by(func.count(VmObservations.id_observation).desc())
         .distinct()
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     taxonCommunesList = list()
     nbObsTotal = 0
     for r in results:
@@ -67,7 +68,7 @@ def getTaxonsTerritory(session):
 
 
 # With distinct the result in a array not an object, 0: lb_nom, 1: nom_vern
-def getTaxonsAreas(session, id_area):
+def getTaxonsAreas(id_area):
     id_photo = current_app.config["ATTR_MAIN_PHOTO"]
     obs_in_area = (
         select(distinct(VmObservations.id_observation).label("id_observation"))
@@ -108,7 +109,7 @@ def getTaxonsAreas(session, id_area):
         )
         .order_by(func.count(distinct(VmObservations.id_observation)).desc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     taxonAreasList = list()
     nbObsTotal = 0
     for r in results:
@@ -129,7 +130,7 @@ def getTaxonsAreas(session, id_area):
     return {"taxons": taxonAreasList, "nbObsTotal": nbObsTotal}
 
 
-def getTaxonsChildsList(session, cd_ref):
+def getTaxonsChildsList(cd_ref):
     id_photo = current_app.config["ATTR_MAIN_PHOTO"]
     childs_ids = select(func.atlas.find_all_taxons_childs(cd_ref))
     req = (
@@ -151,7 +152,7 @@ def getTaxonsChildsList(session, cd_ref):
         .outerjoin(VmMedias, (VmMedias.cd_ref == VmTaxons.cd_ref) & (VmMedias.id_type == id_photo))
         .filter(VmTaxons.cd_ref.in_(childs_ids))
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     taxonRankList = list()
     nbObsTotal = 0
     for r in results:
@@ -172,7 +173,7 @@ def getTaxonsChildsList(session, cd_ref):
     return {"taxons": taxonRankList, "nbObsTotal": nbObsTotal}
 
 
-def getINPNgroupPhotos(session):
+def getINPNgroupPhotos():
     """
     Get list of INPN groups with at least one photo
     """
@@ -184,7 +185,7 @@ def getINPNgroupPhotos(session):
         .group_by(VmTaxons.group2_inpn)
         .order_by(func.count(distinct(VmMedias.id_media)).desc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     groupList = list()
     for r in results:
         temp = {"group": utils.deleteAccent(r.group2_inpn), "groupAccent": r.group2_inpn}
@@ -192,7 +193,7 @@ def getINPNgroupPhotos(session):
     return groupList
 
 
-def getTaxonsGroup(session, groupe):
+def getTaxonsGroup(groupe):
     id_photo = current_app.config["ATTR_MAIN_PHOTO"]
     req = (
         select(
@@ -224,7 +225,7 @@ def getTaxonsGroup(session, groupe):
             VmMedias.id_media,
         )
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     tabTaxons = list()
     nbObsTotal = 0
     for r in results:
@@ -246,13 +247,13 @@ def getTaxonsGroup(session, groupe):
 
 
 # get all groupINPN
-def getAllINPNgroup(session):
+def getAllINPNgroup():
     req = (
         select(func.sum(VmTaxons.nb_obs).label("som_obs"), VmTaxons.group2_inpn)
         .group_by(VmTaxons.group2_inpn)
         .order_by(func.sum(VmTaxons.nb_obs).desc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     groupList = list()
     for r in results:
         temp = {"group": utils.deleteAccent(r.group2_inpn), "groupAccent": r.group2_inpn}

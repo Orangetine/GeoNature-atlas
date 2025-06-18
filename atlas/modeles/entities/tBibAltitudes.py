@@ -1,14 +1,10 @@
 # coding: utf-8
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
+from atlas.env import db
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class TBibAltitudes(Base):
+class TBibAltitudes(db.Model):
     __tablename__ = "bib_altitudes"
     __table_args__ = {"schema": "atlas"}
 

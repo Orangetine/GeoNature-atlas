@@ -3,11 +3,12 @@
 from atlas.modeles import utils
 from sqlalchemy.sql import select
 from atlas.modeles.entities.vmTaxons import VmTaxonsMostView
+from atlas.env import db
 
 
-def mostViewTaxon(session):
+def mostViewTaxon():
     req = select(VmTaxonsMostView)
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
     tabTax = list()
     for r in results:
         obj = r["VmTaxonsMostView"]

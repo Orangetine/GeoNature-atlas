@@ -1,17 +1,13 @@
 # coding: utf-8
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
+from atlas.env import db
 import datetime
 import uuid
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class TBibOrganismes(Base):
+class TBibOrganismes(db.Model):
     __tablename__ = "bib_organismes"
     __table_args__ = {"schema": "utilisateurs"}
 

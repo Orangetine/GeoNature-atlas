@@ -6,9 +6,10 @@ from atlas.modeles import utils
 from atlas.modeles.entities.tBibTaxrefRang import TBibTaxrefRang
 from atlas.modeles.entities.vmTaxref import VmTaxref
 from atlas.modeles.entities.vmTaxons import VmTaxons
+from atlas.env import db
 
 
-def searchEspece(session, cd_ref):
+def searchEspece(cd_ref):
     """
     recherche l espece corespondant au cd_nom et tout ces fils
     """
@@ -37,7 +38,7 @@ def searchEspece(session, cd_ref):
         .outerjoin(VmTaxons, VmTaxons.cd_ref == VmTaxref.cd_ref)
         .filter(VmTaxref.cd_nom == cd_ref)
     )
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
     taxonSearch = dict()
     for r in results:
         obj = r["VmTaxref"]
@@ -79,7 +80,7 @@ def searchEspece(session, cd_ref):
         .filter(VmTaxons.cd_ref.in_(childs_ids))
         .order_by(VmTaxons.lb_nom.asc(), VmTaxons.nb_obs.desc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     listTaxonsChild = list()
     for r in results:
         temp = {
@@ -97,13 +98,13 @@ def searchEspece(session, cd_ref):
     return {"taxonSearch": taxonSearch, "listTaxonsChild": listTaxonsChild}
 
 
-def getSynonymy(session, cd_ref):
+def getSynonymy(cd_ref):
     req = (
         select(VmTaxref.nom_complet_html, VmTaxref.lb_nom)
         .filter(VmTaxref.cd_ref == cd_ref)
         .order_by(VmTaxref.lb_nom.asc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     tabSyn = list()
     for r in results:
         temp = {"lb_nom": r.lb_nom, "nom_complet_html": r.nom_complet_html}
@@ -111,9 +112,9 @@ def getSynonymy(session, cd_ref):
     return tabSyn
 
 
-def getTaxon(session, cd_nom):
+def getTaxon(cd_nom):
     return (
-        session.query(
+        db.session.query(
             VmTaxref.lb_nom,
             VmTaxref.id_rang,
             VmTaxref.cd_ref,
@@ -127,14 +128,14 @@ def getTaxon(session, cd_nom):
     )
 
 
-def getCd_sup(session, cd_ref):
-    req = session.query(VmTaxref.cd_taxsup).filter(VmTaxref.cd_nom == cd_ref).first()
+def getCd_sup(cd_ref):
+    req = db.session.query(VmTaxref.cd_taxsup).filter(VmTaxref.cd_nom == cd_ref).first()
     return req.cd_taxsup
 
 
-def getInfoFromCd_ref(session, cd_ref):
+def getInfoFromCd_ref(cd_ref):
     req = (
-        session.query(VmTaxref.lb_nom, TBibTaxrefRang.nom_rang)
+        db.session.query(VmTaxref.lb_nom, TBibTaxrefRang.nom_rang)
         .join(TBibTaxrefRang, TBibTaxrefRang.id_rang == VmTaxref.id_rang)
         .filter(VmTaxref.cd_ref == cd_ref)
     )
@@ -142,9 +143,9 @@ def getInfoFromCd_ref(session, cd_ref):
     return {"lb_nom": req[0].lb_nom, "nom_rang": req[0].nom_rang}
 
 
-def getAllTaxonomy(session, cd_ref):
-    taxonSup = getCd_sup(session, cd_ref)  # cd_taxsup
-    taxon = getTaxon(session, taxonSup)
+def getAllTaxonomy(cd_ref):
+    taxonSup = getCd_sup(cd_ref)  # cd_taxsup
+    taxon = getTaxon(taxonSup)
     tabTaxon = list()
     while taxon and taxon.tri_rang >= current_app.config["LIMIT_RANG_TAXONOMIQUE_HIERARCHIE"]:
         temp = {
@@ -155,11 +156,11 @@ def getAllTaxonomy(session, cd_ref):
             "tri_rang": taxon.tri_rang,
         }
         tabTaxon.insert(0, temp)
-        taxon = getTaxon(session, taxon.cd_taxsup)  # on avance
+        taxon = getTaxon(taxon.cd_taxsup)  # on avance
     return tabTaxon
 
 
-def get_cd_ref(session, cd_nom):
+def get_cd_ref(cd_nom):
     req = select(VmTaxref.cd_ref).filter(VmTaxref.cd_nom == cd_nom)
-    row = session.execute(req).one()
+    row = db.session.execute(req).one()
     return row.cd_ref
