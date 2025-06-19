@@ -2,12 +2,11 @@
 
 
 from flask import current_app
-from sqlalchemy.sql import text, func, select, or_
+from sqlalchemy.sql import func, select, or_
 
 from atlas.modeles.entities.vmMedias import VmMedias
 from atlas.modeles.entities.vmTaxons import VmTaxons
 from atlas.modeles import utils
-from atlas.app import create_app
 from atlas.env import db
 
 
@@ -36,10 +35,10 @@ def deleteNone(r):
         return r
 
 
-def getFirstPhoto(session, cd_ref, id):
-    childs_ids = select(func.atlas.find_all_taxons_childs(cd_ref))
+def getFirstPhoto(cd_ref, id):
+    childs_ids = db.select(func.atlas.find_all_taxons_childs(cd_ref))
     req = (
-        session.query(VmMedias)
+        db.session.query(VmMedias)
         .filter(
             or_(VmMedias.cd_ref.in_(childs_ids), VmMedias.cd_ref == cd_ref), VmMedias.id_type == id
         )
@@ -49,9 +48,9 @@ def getFirstPhoto(session, cd_ref, id):
         return _format_media(r)
 
 
-def getPhotoCarousel(session, cd_ref, id):
+def getPhotoCarousel(cd_ref, id):
     childs_ids = select(func.atlas.find_all_taxons_childs(cd_ref).label("cd_ref"))
-    req = session.query(VmMedias).filter(
+    req = db.session.query(VmMedias).filter(
         or_(VmMedias.cd_ref.in_(childs_ids), VmMedias.cd_ref == cd_ref), VmMedias.id_type == id
     )
     return [_format_media(r) for r in req]
@@ -108,9 +107,9 @@ def switchMedia(row):
     return media_template[row.id_type].format(path=goodPath)
 
 
-def getVideo_and_audio(session, cd_ref, id5, id6, id7, id8, id9):
+def getVideo_and_audio(cd_ref, id5, id6, id7, id8, id9):
     req = (
-        session.query(VmMedias)
+        db.session.query(VmMedias)
         .filter(VmMedias.id_type.in_((id5, id6, id7, id8, id9)), VmMedias.cd_ref == cd_ref)
         .order_by(VmMedias.date_media.desc())
     )
@@ -135,27 +134,27 @@ def getVideo_and_audio(session, cd_ref, id5, id6, id7, id8, id9):
     return tabMedias
 
 
-def getLinks_and_articles(session, cd_ref, id3, id4):
+def getLinks_and_articles(cd_ref, id3, id4):
     req = (
-        session.query(VmMedias)
+        db.session.query(VmMedias)
         .filter(VmMedias.id_type.in_((id3, id4)), VmMedias.cd_ref == cd_ref)
         .order_by(VmMedias.date_media.desc())
     )
     return [_format_media(r) for r in req]
 
 
-def get_liens_importants(session, cd_ref, media_ids):
+def get_liens_importants(cd_ref, media_ids):
     req = (
-        session.query(VmMedias)
+        db.session.query(VmMedias)
         .filter(VmMedias.id_type == func.any(media_ids), VmMedias.cd_ref == cd_ref)
         .order_by(VmMedias.date_media.desc())
     )
     return [_format_media(r) for r in req]
 
 
-def getPhotosGallery(session, id1, id2):
+def getPhotosGallery(id1, id2):
     req = (
-        session.query(VmMedias, VmTaxons.nom_vern, VmTaxons.lb_nom, VmTaxons.nb_obs)
+        db.session.query(VmMedias, VmTaxons.nom_vern, VmTaxons.lb_nom, VmTaxons.nb_obs)
         .join(VmTaxons, VmTaxons.cd_ref == VmMedias.cd_ref)
         .filter(VmMedias.id_type.in_((id1, id2)))
         .order_by(func.random())
@@ -176,9 +175,9 @@ def getPhotosGallery(session, id1, id2):
     return tab_photos
 
 
-def getPhotosGalleryByGroup(session, id1, id2, INPNgroup):
+def getPhotosGalleryByGroup(id1, id2, INPNgroup):
     req = (
-        session.query(VmMedias, VmTaxons.nom_vern, VmTaxons.lb_nom, VmTaxons.nb_obs)
+        db.session.query(VmMedias, VmTaxons.nom_vern, VmTaxons.lb_nom, VmTaxons.nb_obs)
         .join(VmTaxons, VmTaxons.cd_ref == VmMedias.cd_ref)
         .filter(VmMedias.id_type.in_((id1, id2)), VmTaxons.group2_inpn == INPNgroup)
         .order_by(func.random())

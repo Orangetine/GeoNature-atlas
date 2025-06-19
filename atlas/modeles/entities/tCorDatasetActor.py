@@ -1,13 +1,9 @@
 # coding: utf-8
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
+from atlas.env import db
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class TCorDatasetActor(Base):
+class TCorDatasetActor(db.Model):
     __tablename__ = "cor_dataset_actor"
     __table_args__ = {"schema": "gn_meta"}
 

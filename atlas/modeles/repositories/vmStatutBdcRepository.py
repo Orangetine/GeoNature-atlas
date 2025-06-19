@@ -1,10 +1,11 @@
 from sqlalchemy.sql import select
 from atlas.modeles.entities.vmStatutBdc import VmStatutBdc
+from atlas.env import db
 
 
-def get_taxons_statut_bdc(session, cd_ref):
+def get_taxons_statut_bdc(cd_ref):
     req = select(VmStatutBdc).filter(VmStatutBdc.cd_ref == cd_ref)
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
     statuts = list()
     for row in results:
         obj = row["VmStatutBdc"]

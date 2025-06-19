@@ -1,15 +1,11 @@
 # coding: utf-8
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
+from atlas.env import db
 import datetime
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmMedias(Base):
+class VmMedias(db.Model):
     __tablename__ = "vm_medias"
     __table_args__ = {"schema": "atlas"}
 

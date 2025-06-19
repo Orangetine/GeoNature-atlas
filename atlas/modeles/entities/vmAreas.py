@@ -2,16 +2,12 @@
 from geoalchemy2.types import Geometry
 from sqlalchemy import String, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
+from atlas.env import db
 from typing import List
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmBibAreasTypes(Base):
+class VmBibAreasTypes(db.Model):
     __tablename__ = "vm_bib_areas_types"
     __table_args__ = {"schema": "atlas"}
 
@@ -22,7 +18,7 @@ class VmBibAreasTypes(Base):
     areas: Mapped[List["VmAreas"]] = relationship("VmAreas", back_populates="type")
 
 
-class VmAreas(Base):
+class VmAreas(db.Model):
     __tablename__ = "vm_l_areas"
     __table_args__ = {"schema": "atlas"}
 
@@ -36,7 +32,7 @@ class VmAreas(Base):
     type: Mapped["VmBibAreasTypes"] = relationship("VmBibAreasTypes", back_populates="areas")
 
 
-class VmCorAreas(Base):
+class VmCorAreas(db.Model):
     __tablename__ = "vm_cor_areas"
     __table_args__ = {"schema": "atlas"}
 
@@ -44,7 +40,7 @@ class VmCorAreas(Base):
     id_area_group: Mapped[int] = mapped_column(primary_key=True)
 
 
-class VmCorAreaSynthese(Base):
+class VmCorAreaSynthese(db.Model):
     __tablename__ = "vm_cor_area_synthese"
     __table_args__ = {"schema": "atlas"}
 
@@ -54,7 +50,7 @@ class VmCorAreaSynthese(Base):
     type_code: Mapped[str] = mapped_column(String(25))
 
 
-class VmAreaStatTaxonomyGroup(Base):
+class VmAreaStatTaxonomyGroup(db.Model):
     __tablename__ = "vm_area_stats_by_taxonomy_group"
     __table_args__ = {"schema": "atlas"}
 
@@ -68,7 +64,7 @@ class VmAreaStatTaxonomyGroup(Base):
     nb_species_in_teritory: Mapped[int] = mapped_column()
 
 
-class VmAreaStats(Base):
+class VmAreaStats(db.Model):
     __tablename__ = "vm_area_stats"
     __table_args__ = {"schema": "atlas"}
 
@@ -87,7 +83,7 @@ class VmAreaStats(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class VmAreaStatsOrganism(Base):
+class VmAreaStatsOrganism(db.Model):
     __tablename__ = "vm_area_stats_by_organism"
     __table_args__ = {"schema": "atlas"}
 

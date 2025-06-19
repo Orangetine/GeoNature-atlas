@@ -9,9 +9,10 @@ from atlas.modeles.entities.tBibOrganismes import TBibOrganismes
 from atlas.modeles.entities.vmObservations import VmObservations
 from atlas.modeles.entities.vmOrganisms import VmOrganisms
 from atlas.modeles.entities.vmTaxref import VmTaxref
+from atlas.env import db
 
 
-def statOrganism(session, id_organism):
+def statOrganism(id_organism):
     # Fiche organism
     req = (
         select(
@@ -38,7 +39,7 @@ def statOrganism(session, id_organism):
             VmOrganisms.email_organism,
         )
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     StatsOrga = dict()
     for r in results:
         StatsOrga = {
@@ -57,7 +58,7 @@ def statOrganism(session, id_organism):
     return StatsOrga
 
 
-def topObsOrganism(session, id_organism):
+def topObsOrganism(id_organism):
     # Stats avancées organism
     req = (
         select(VmOrganisms.cd_ref, VmOrganisms.nb_observations.label("nb_obs_taxon"))
@@ -65,7 +66,7 @@ def topObsOrganism(session, id_organism):
         .order_by(VmOrganisms.nb_observations.desc())
         .limit(3)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     topSpecies = list()
     for r in results:
         temp = {"cd_ref": r.cd_ref, "nb_obs_taxon": r.nb_obs_taxon}
@@ -73,7 +74,7 @@ def topObsOrganism(session, id_organism):
     return topSpecies
 
 
-def getListOrganism(session, cd_ref):
+def getListOrganism(cd_ref):
     # Fiche espèce : Liste des organismes pour un taxon
     childs_ids = select(func.atlas.find_all_taxons_childs(cd_ref))
     nb_observations = func.sum(VmOrganisms.nb_observations).label("nb_observations")
@@ -94,7 +95,7 @@ def getListOrganism(session, cd_ref):
         )
         .order_by(nb_observations.desc())
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     ListOrganism = list()
     for r in results:
         temp = {
@@ -108,7 +109,7 @@ def getListOrganism(session, cd_ref):
     return ListOrganism
 
 
-def getTaxonRepartitionOrganism(session, id_organism):
+def getTaxonRepartitionOrganism(id_organism):
     # Fiche organism : réparition du type d'observations
     req = (
         select(func.sum(VmOrganisms.nb_observations).label("nb_obs_group"), VmTaxref.group2_inpn)
@@ -116,7 +117,7 @@ def getTaxonRepartitionOrganism(session, id_organism):
         .filter(VmOrganisms.id_organism == id_organism)
         .group_by(VmTaxref.group2_inpn, VmOrganisms.id_organism)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     ListGroup = list()
     for r in results:
         temp = {"group2_inpn": r.group2_inpn, "nb_obs_group": int(r.nb_obs_group)}
@@ -124,7 +125,7 @@ def getTaxonRepartitionOrganism(session, id_organism):
     return ListGroup
 
 
-def get_nb_organism_on_area(session, id_area):
+def get_nb_organism_on_area(id_area):
     req = (
         select(
             func.count(distinct(VmOrganisms.nom_organism)).label("nb_organism"),
@@ -135,14 +136,14 @@ def get_nb_organism_on_area(session, id_area):
         .join(VmAreas, func.ST_Intersects(VmObservations.the_geom_point, VmAreas.the_geom))
         .filter(VmAreas.id_area == id_area)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     result = dict()
     for r in results:
         result = r.nb_organism
     return result
 
 
-def get_nb_species_by_organism_on_area(session, id_area):
+def get_nb_species_by_organism_on_area(id_area):
     req = (
         select(
             func.count(distinct(VmObservations.cd_ref)).label("nb_species"),
@@ -155,7 +156,7 @@ def get_nb_species_by_organism_on_area(session, id_area):
         .group_by(VmOrganisms.nom_organism)
         .order_by(VmOrganisms.nom_organism)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     list_species_by_organism = list()
     for r in results:
         temp = {"nb": r.nb_species, "label": r.nom_organism}
@@ -163,7 +164,7 @@ def get_nb_species_by_organism_on_area(session, id_area):
     return list_species_by_organism
 
 
-def get_nb_observations_by_organism_on_area(session, id_area):
+def get_nb_observations_by_organism_on_area(id_area):
     req = (
         select(
             func.count(VmObservations.id_observation).label("nb_observations"),
@@ -176,7 +177,7 @@ def get_nb_observations_by_organism_on_area(session, id_area):
         .group_by(TBibOrganismes.nom_organisme)
         .order_by(TBibOrganismes.nom_organisme)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     list_observations_by_organism = list()
     for r in results:
         temp = {"nb": r.nb_observations, "label": r.nom_organisme}
@@ -184,11 +185,11 @@ def get_nb_observations_by_organism_on_area(session, id_area):
     return list_observations_by_organism
 
 
-def get_species_by_organism_on_area(session, id_area):
+def get_species_by_organism_on_area(id_area):
     req = select(VmAreaStatsOrganism.nb_species, VmAreaStatsOrganism.nom_organism).filter(
         VmAreaStatsOrganism.id_area == id_area
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     list_species_by_organism = list()
     for r in results:
         temp = {"nb": r.nb_species, "label": r.nom_organism}
@@ -196,11 +197,11 @@ def get_species_by_organism_on_area(session, id_area):
     return list_species_by_organism
 
 
-def get_nb_observations_by_organism_on_area(session, id_area):
+def get_nb_observations_by_organism_on_area(id_area):
     req = select(VmAreaStatsOrganism.nb_obs, VmAreaStatsOrganism.nom_organism).filter(
         VmAreaStatsOrganism.id_area == id_area
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     list_species_by_organism = list()
     for r in results:
         temp = {"nb": r.nb_obs, "label": r.nom_organism}

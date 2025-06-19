@@ -1,13 +1,9 @@
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
+from atlas.env import db
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class VmStatutBdc(Base):
+class VmStatutBdc(db.Model):
     __tablename__ = "vm_bdc_statut"
     __table_args__ = {"schema": "atlas"}
 

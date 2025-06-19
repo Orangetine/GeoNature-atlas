@@ -2,9 +2,9 @@
 from sqlalchemy import desc, func, select
 
 from atlas.modeles.entities.vmSearchTaxon import VmSearchTaxon
+from atlas.env import db
 
-
-def listeTaxonsSearch(session, search, limit=50):
+def listeTaxonsSearch(search, limit=50):
     """
     Recherche dans la VmSearchTaxon en ilike
     Utilisé pour l'autocomplétion de la recherche de taxon
@@ -29,7 +29,7 @@ def listeTaxonsSearch(session, search, limit=50):
         .limit(limit)
         .subquery()
     )
-    req = session.query(subreq.c.search_name, subreq.c.cd_ref, subreq.c.idx_trgm).distinct()
+    req = db.session.query(subreq.c.search_name, subreq.c.cd_ref, subreq.c.idx_trgm).distinct()
     data = req.all()
 
     return [{"label": d[0], "value": d[1]} for d in data]

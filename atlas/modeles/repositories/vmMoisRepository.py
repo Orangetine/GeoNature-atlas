@@ -1,14 +1,13 @@
 # -*- coding:utf-8 -*-
 
-from sqlalchemy.sql import text, func, select, or_
+from sqlalchemy.sql import func, select, or_
 from atlas.modeles.entities.vmMois import VmMois
-from atlas.app import create_app
 from atlas.env import db
 
 
-def getMonthlyObservationsChilds(session, cd_ref):
+def getMonthlyObservationsChilds(cd_ref):
     childs_ids = select(func.atlas.find_all_taxons_childs(cd_ref))
-    mesMois = session.query(
+    mesMois = db.session.query(
         func.sum(VmMois._01).label("_01"),
         func.sum(VmMois._02).label("_02"),
         func.sum(VmMois._03).label("_03"),

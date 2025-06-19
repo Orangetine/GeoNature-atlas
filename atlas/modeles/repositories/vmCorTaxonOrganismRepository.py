@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*-
 
-from atlas.modeles.entities.vmTaxons import VmCorTaxonOrganism
+from atlas.modeles.entities.vmOrganisms import VmOrganisms
+from atlas.env import db
 
 
-def getTaxonOrganism(session, cd_ref):
-    result = session.query(
-        VmCorTaxonOrganism.nom_organism, VmCorTaxonOrganism.nb_observations
-    ).filter(VmCorTaxonOrganism.cd_ref == cd_ref)
+def getTaxonOrganism(cd_ref):
+    result = db.session.query(
+        VmOrganisms.nom_organism, VmOrganisms.nb_observations
+    ).filter(VmOrganisms.cd_ref == cd_ref)
 
     return {el.nom_organism: el.nb_observations for el in result}

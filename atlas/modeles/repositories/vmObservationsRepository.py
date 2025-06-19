@@ -8,26 +8,25 @@ from sqlalchemy import Interval, distinct, select
 from sqlalchemy.dialects.postgresql import array
 
 from atlas.modeles import utils
-from atlas.utils import GenericTable
 from atlas.modeles.repositories.vmMedias import VmMedias
 from atlas.modeles.entities.vmObservations import VmObservations
 from atlas.modeles.entities.vmTaxons import VmTaxons
 from atlas.modeles.entities.vmTaxref import VmTaxref
 from atlas.modeles.entities.vmAreas import VmCorAreaSynthese, VmAreas, VmBibAreasTypes
+from atlas.env import db
 
 currentYear = datetime.now().year
 
 
-def searchObservationsChilds(session, cd_ref):
-    subquery = session.query(func.atlas.find_all_taxons_childs(cd_ref))
-    query = session.query(VmObservations).filter(
+def searchObservationsChilds(cd_ref):
+    subquery = select(func.atlas.find_all_taxons_childs(cd_ref))
+    query = db.session.query(VmObservations).filter(
         or_(
             VmObservations.cd_ref.in_(subquery),
             VmObservations.cd_ref == cd_ref,
         )
     )
     observations = query.all()
-    obsList = list()
 
     features = []
     for o in observations:
@@ -41,10 +40,10 @@ def searchObservationsChilds(session, cd_ref):
     return FeatureCollection(features)
 
 
-def firstObservationChild(session, cd_ref):
-    childs_ids = session.query(func.atlas.find_all_taxons_childs(cd_ref))
+def firstObservationChild(cd_ref):
+    childs_ids = db.session.query(func.atlas.find_all_taxons_childs(cd_ref))
     req = (
-        session.query(func.min(VmTaxons.yearmin).label("yearmin"))
+        db.session.query(func.min(VmTaxons.yearmin).label("yearmin"))
         .join(VmTaxref, VmTaxref.cd_ref == VmTaxons.cd_ref)
         .filter(or_(VmTaxons.cd_ref.in_(childs_ids), VmTaxons.cd_ref == cd_ref))
         .all()
@@ -53,7 +52,7 @@ def firstObservationChild(session, cd_ref):
         return r.yearmin
 
 
-def lastObservations(session, mylimit, idPhoto):
+def lastObservations(mylimit, idPhoto):
     req = (
         select(
             VmObservations,
@@ -78,7 +77,7 @@ def lastObservations(session, mylimit, idPhoto):
         .order_by(VmObservations.dateobs.desc())
     )
 
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
 
     obsList = []
     for row in results:
@@ -95,7 +94,7 @@ def lastObservations(session, mylimit, idPhoto):
     return obsList
 
 
-def getObservationsByArea(session, id_area, limit):
+def getObservationsByArea(id_area, limit):
     req = (
         select(
             VmObservations,
@@ -115,7 +114,7 @@ def getObservationsByArea(session, id_area, limit):
     if limit:
         req = req.limit(limit)
 
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
     obsList = list()
     for row in results:
         obs = row["VmObservations"]
@@ -130,13 +129,13 @@ def getObservationsByArea(session, id_area, limit):
     return obsList
 
 
-def getObservationTaxonArea(session, id_area, cd_ref):
+def getObservationTaxonArea(id_area, cd_ref):
     req = (
         select(VmObservations.geojson_point, VmObservations.dateobs)
         .join(VmCorAreaSynthese, VmCorAreaSynthese.id_synthese == VmObservations.id_observation)
         .filter(VmCorAreaSynthese.id_area == id_area, VmObservations.cd_ref == cd_ref)
     )
-    results = session.execute(req).mappings().all()
+    results = db.session.execute(req).mappings().all()
     obsList = list()
     for row in results:
         temp = {**row}
@@ -170,40 +169,40 @@ def observersParser(req):
     return sorted(finalList)
 
 
-def getObservers(session, cd_ref):
-    childs_ids = session.execute(select(func.atlas.find_all_taxons_childs(cd_ref))).scalars().all()
-    taxons = [cd_ref] + childs_ids  # inclut le parent
+def getObservers(cd_ref):
+    childs_ids = db.session.execute(select(func.atlas.find_all_taxons_childs(cd_ref))).scalars().all()
+    taxons = [cd_ref] + childs_ids  
 
     req = select(distinct(VmObservations.observateurs).label("observateurs")).filter(
         VmObservations.cd_ref == func.any(array(taxons))
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     return observersParser(results)
 
 
-def getGroupeObservers(session, groupe):
+def getGroupeObservers(groupe):
     subquery = select(VmTaxons.cd_ref).filter(VmTaxons.group2_inpn == groupe)
     req = select(distinct(VmObservations.observateurs).label("observateurs")).filter(
         VmObservations.cd_ref.in_(subquery)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     return observersParser(results)
 
 
-def getObserversArea(session, id_area):
+def getObserversArea(id_area):
     req = (
         select(distinct(VmObservations.observateurs).label("observateurs"))
         .join(VmCorAreaSynthese, VmCorAreaSynthese.id_synthese == VmObservations.id_observation)
         .filter(VmCorAreaSynthese.id_area == id_area)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     return observersParser(results)
 
 
-def statIndex(session):
+def statIndex():
     result = {"nbTotalObs": None, "nbTotalTaxons": None, "town": None, "photo": None}
     req = select(func.count(VmObservations.id_observation).label("count"))
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     for r in results:
         result["nbTotalObs"] = r.count
 
@@ -213,12 +212,12 @@ def statIndex(session):
         .join(VmBibAreasTypes, VmBibAreasTypes.id_type == VmAreas.id_type)
         .filter(VmBibAreasTypes.type_code.in_(type_code))
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     for r in results:
         result["town"] = r.count
 
     req = select(func.count(distinct(VmTaxons.cd_ref)).label("count"))
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     for r in results:
         result["nbTotalTaxons"] = r.count
 
@@ -229,13 +228,13 @@ def statIndex(session):
         .join(VmTaxons, VmTaxons.cd_ref == VmMedias.cd_ref)
         .filter(VmMedias.id_type.in_([id_type1, id_type2]))
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     for r in results:
         result["photo"] = r.count
     return result
 
 
-def genericStat(session, tab):
+def genericStat(tab):
     tabStat = list()
     for pair in tab:
         rang, nomTaxon = list(pair.items())[0]
@@ -249,18 +248,17 @@ def genericStat(session, tab):
             .join(VmObservations, VmObservations.cd_ref == VmTaxons.cd_ref)
             .filter(colonne_rang.in_(nomTaxon))
         )
-        results = session.execute(req).all()
+        results = db.session.execute(req).all()
         for r in results:
             temp = {"nb_obs": r.nb_obs, "nb_taxons": r.nb_taxons}
             tabStat.append(temp)
     return tabStat
 
 
-def genericStatMedias(session, tab):
+def genericStatMedias(tab):
     tabStat = list()
     for i in range(len(tab)):
         rang, nomTaxon = list(tab[i].items())[0]
-        # Accès dynamique à la colonne VmTaxons.rang
         colonne_rang = getattr(VmTaxons, rang)
         req = (
             select(
@@ -279,7 +277,7 @@ def genericStatMedias(session, tab):
             .order_by(func.random())
             .limit(10)
         )
-        results = session.execute(req).all()
+        results = db.session.execute(req).all()
         tabStat.insert(i, list())
         for r in results:
             shorterName = None
@@ -303,7 +301,7 @@ def genericStatMedias(session, tab):
         return tabStat
 
 
-def getLastDiscoveries(session):
+def getLastDiscoveries():
     id_type = current_app.config["ATTR_MAIN_PHOTO"]
     subreq = (
         select(func.date(func.min(VmObservations.dateobs)).label("date"), VmObservations.cd_ref)
@@ -328,7 +326,7 @@ def getLastDiscoveries(session):
         .order_by(subreq.c.date.desc())
         .limit(6)
     )
-    results = session.execute(req).all()
+    results = db.session.execute(req).all()
     lastDiscoveriesList = list()
     for r in results:
         temp = {
