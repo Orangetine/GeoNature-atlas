@@ -23,7 +23,7 @@ if [ "$(id -u)" == "0" ]; then
 fi
 
 echo "Stopping application..."
-sudo systemctl stop geonature-atlas
+sudo systemctl stop geonature-atlas-dev
 
 echo "Creating and activating Virtual env..."
 
