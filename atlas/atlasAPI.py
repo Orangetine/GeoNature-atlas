@@ -12,7 +12,7 @@ from atlas.modeles.repositories import (
     vmAreasRepository,
     vmOrganismsRepository,
 )
-from atlas.env import cache, db
+from atlas.env import cache
 
 api = Blueprint("api", __name__)
 
@@ -33,6 +33,18 @@ def searchAreaAPI():
     return jsonify(results)
 
 
+@api.route("/observationsMailleTerritory", methods=["GET"])
+def getMailleHomeTerritory():
+    """
+    Retourne les mailles de tout le territoire
+    """
+    current_app.logger.debug("start AFFICHAGE_TERRITORY")
+    observations = vmObservationsMaillesRepository.territoryObservationsMailles()
+    current_app.logger.debug("end AFFICHAGE_TERRITORY")
+
+    return observations
+
+
 if not current_app.config["AFFICHAGE_MAILLE"]:
 
     @api.route("/observationsMailleAndPoint/<int(signed=True):cd_ref>", methods=["GET"])
@@ -42,14 +54,12 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
 
         :returns: dict ({'point:<GeoJson>', 'maille': 'GeoJson})
         """
-        session = db.session
         observations = {
             "point": vmObservationsRepository.searchObservationsChilds(cd_ref),
             "maille": vmObservationsMaillesRepository.getObservationsMaillesChilds(
-                session, cd_ref
+                cd_ref
             ),
         }
-        session.close()
         return jsonify(observations)
 
 
@@ -60,14 +70,11 @@ def getObservationsMailleAPI(cd_ref):
 
     :returns: GeoJson
     """
-    session = db.session
     observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
-        session,
         cd_ref,
         year_min=request.args.get("year_min"),
         year_max=request.args.get("year_max"),
     )
-    session.close()
     return jsonify(observations)
 
 
@@ -89,17 +96,18 @@ def getObservationsGenericApi(cd_ref: int):
     Returns:
         [type]: [description]
     """
-    session = db.session
-    if current_app.config["AFFICHAGE_MAILLE"]:
+    if current_app.config["AFFICHAGE_TERRITOIRE_OBS"]:
+        observations = vmObservationsMaillesRepository.getObservationsMaillesTerritorySpecies(
+            cd_ref,
+        )
+    elif current_app.config["AFFICHAGE_MAILLE"]:
         observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
-            session,
             cd_ref,
             year_min=request.args.get("year_min"),
             year_max=request.args.get("year_max"),
         )
     else:
         observations = vmObservationsRepository.searchObservationsChilds(cd_ref)
-    session.close()
 
     return jsonify(observations)
 
@@ -114,22 +122,19 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
 
 @api.route("/observationsMaille/<id_area>/<int(signed=True):cd_ref>", methods=["GET"])
 def getObservationsAreaTaxonMailleAPI(id_area, cd_ref):
-    connection = db.engine.connect()
     observations = vmObservationsMaillesRepository.getObservationsTaxonAreaMaille(
-        connection, id_area, cd_ref
+        id_area, cd_ref
     )
-    connection.close()
     return jsonify(observations)
 
 
 @api.route("/area/<int(signed=True):id_area>", methods=["GET"])
 def get_observations_area_api(id_area):
-    session = db.session
 
     limit = request.args.get("limit")
     if current_app.config["AFFICHAGE_MAILLE"]:
         observations = vmObservationsMaillesRepository.getObservationsByArea(
-            session, str(id_area)
+            str(id_area)
         )
     else:
         observations = vmObservationsRepository.getObservationsByArea(id_area, limit)

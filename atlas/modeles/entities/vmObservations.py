@@ -43,8 +43,6 @@ class VmObservationsMailles(db.Model):
     __tablename__ = "vm_observations_mailles"
     __table_args__ = {"schema": "atlas"}
 
-    cd_ref: Mapped[int] = mapped_column(primary_key=True, index=True)
-    annee: Mapped[str] = mapped_column(String(1000), primary_key=True, index=True)
     id_maille: Mapped[int] = mapped_column(primary_key=True, index=True)
     nbr: Mapped[int] = mapped_column()
     id_observations: Mapped[List[int]] = mapped_column(ARRAY(Integer))
