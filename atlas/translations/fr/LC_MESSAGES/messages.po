@@ -556,6 +556,10 @@ msgstr "Fiche organisme"
 msgid "species.obs.for.tax"
 msgstr "Observation pour le taxon"
 
+#: atlas/templates/core/listTaxons.html:109
+msgid "threatened_species"
+msgstr "Espèce menacée"
+
 #~ msgid "photo"
 #~ msgstr "Photo"
 
