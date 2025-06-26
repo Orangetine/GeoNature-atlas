@@ -5,14 +5,41 @@ $(".lazy").lazy({
           appendScroll: $("#taxonList")
         });
 $('[data-toggle="tooltip"]').tooltip();
-$(document).ready(function(){
-  $("#taxonInput").on("keyup", function() {
-    const value = $(this).val().toLowerCase();
-    $("#taxonList li").each(function() {
-      const match = $(this).text().toLowerCase().includes(value);
-      this.style.setProperty("display", match ? "flex" : "none", "important");
-    });
+// 1. Extraire les groupes uniques depuis taxonsData
+const groupSet = new Set(taxonsData.map(t => t.group2_inpn).filter(Boolean));
+
+// 2. Créer dynamiquement le menu
+const groupFilterList = document.getElementById("groupFilterList");
+groupFilterList.innerHTML = `
+  <li><a class="dropdown-item" href="#" data-group="all">Tous les groupes</a></li>
+  ${[...groupSet].sort().map(group =>
+    `<li><a class="dropdown-item" href="#" data-group="${group}">${group}</a></li>`
+  ).join("")}
+`;
+
+// 3. Gérer le filtre
+let selectedGroup = "all";
+
+function applyCombinedFilter() {
+  const text = $("#taxonInput").val().toLowerCase();
+
+  $("#taxonList li").each(function () {
+    const matchesText = $(this).text().toLowerCase().includes(text);
+    const group = $(this).find(".d-none").text().trim();
+    const matchesGroup = selectedGroup === "all" || group === selectedGroup;
+
+    this.style.setProperty("display", matchesText && matchesGroup ? "flex" : "none", "important");
   });
+}
+
+// 4. Événements
+$("#taxonInput").on("keyup", applyCombinedFilter);
+
+$("#groupFilterList").on("click", ".dropdown-item", function (e) {
+  e.preventDefault();
+  selectedGroup = $(this).data("group");
+  $("#groupFilterDropdown").text(`Groupe : ${selectedGroup === "all" ? "Tous" : selectedGroup}`);
+  applyCombinedFilter();
 });
 
 document.getElementById("exportCsvBtn").addEventListener("click", () => {
@@ -21,16 +48,10 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
     return;
   }
 
-  // Récupérer tous les cd_ref visibles à l'écran
   const visibleCdRefs = Array.from(document.querySelectorAll("#taxonList li"))
-  .filter(li => window.getComputedStyle(li).display !== "none")
-  .map(li => {
-    const link = li.querySelector("a[href*='/espece/']");
-    if (!link) return null;
-    const match = link.getAttribute("href").match(/\/espece\/(\d+)/);
-    return match ? match[1] : null;
-  })
-  .filter(cdref => cdref !== null);
+    .filter(li => window.getComputedStyle(li).display !== "none")
+    .map(li => li.getAttribute("cdRef"))
+    .filter(cdref => cdref !== null);
 
   if (visibleCdRefs.length === 0) {
     alert("Aucun taxon à exporter.");
@@ -39,24 +60,31 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
 
   // Colonnes du CSV
   const rows = [[
-    "Nom vernaculaire", "Nom scientifique", "Nb observations", 
-    "Dernière année", "Groupe taxonomique", "Patrimonial", 
-    "Protection stricte"
+    "CdRef", "Groupe taxonomique", "Nom vernaculaire", "Nom scientifique",
+    "Nombre d'occurrences", "Nombre d'observateurs",  "Dernière observation", 
+    "Code statut", "Menacé", "Patrimonial", "Protection stricte"
   ]];
 
   // Filtrer les taxons visibles dans taxonsData
   taxonsData.forEach(taxon => {
     if (!visibleCdRefs.includes(String(taxon.cd_ref))) return;
 
-    const nomVern = taxon.nom_vern || "-";
-    const nomSci = (taxon.nom_complet_html || "-").replace(/<[^>]*>/g, "");
-    const nbObs = taxon.nb_obs || "0";
-    const lastYear = taxon.last_obs || "-";
     const taxonomicGroup = taxon.group2_inpn || "-";
+    const cdRef = taxon.cd_ref || "-";
+    const nomVern = (typeof taxon.nom_vern === "string" && taxon.nom_vern) 
+      ? taxon.nom_vern.split(',')[0].trim() 
+      : "-";
+    const nomSci = taxon.lb_nom || "-";
+    const nbObs = taxon.nb_obs || "0";
+    const nbObservers = taxon.nb_observers || "0";
+    const lastYear = taxon.last_obs || "-";
+    const codeStatut = taxon.code_statut || "-";
     const patrimonial = taxon.patrimonial || "-";
     const strictProtection = taxon.protection_stricte || "-";
+    const threatened = taxon.threatened || "-";
 
-    rows.push([nomVern, nomSci, nbObs, lastYear, taxonomicGroup, patrimonial, strictProtection]);
+    rows.push([cdRef, taxonomicGroup, nomVern, nomSci, nbObs, 
+      nbObservers, lastYear, codeStatut, threatened, patrimonial, strictProtection]);
   });
 
   const fileName = document.getElementById("exportCsvBtn").dataset.filename || "liste_taxons.csv";
@@ -68,4 +96,83 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+});
+
+
+document.getElementById("exportPdfBtn").addEventListener("click", async () => {
+  if (!Array.isArray(taxonsData)) {
+    alert("Aucune donnée disponible.");
+    return;
+  }
+
+  const visibleCdRefs = Array.from(document.querySelectorAll("#taxonList li"))
+    .filter(li => window.getComputedStyle(li).display !== "none")
+    .map(li => li.getAttribute("cdRef"))
+    .filter(cdref => cdref !== null);
+
+  if (visibleCdRefs.length === 0) {
+    alert("Aucun taxon à exporter.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape" });
+
+  doc.setFontSize(12);
+  doc.text("Liste des taxons visibles", 14, 15);
+
+  const headers = [
+    [
+      "Cd_ref",
+      "Groupe taxonomique",
+      "Nom vernaculaire",
+      "Nom scientifique",
+      "Nombre d’occurrences",
+      "Nombre d'observateurs",
+      "Dernière observation",
+      "Code statut",
+      "Menacé",
+      "Patrimonial",
+      "Protection stricte"
+    ]
+  ];
+
+  const data = taxonsData
+    .filter(taxon => visibleCdRefs.includes(String(taxon.cd_ref)))
+    .map(taxon => [
+      taxon.cd_ref || "-",
+      taxon.group2_inpn || "-",
+      (typeof taxon.nom_vern === "string" && taxon.nom_vern) 
+      ? taxon.nom_vern.split(',')[0].trim() 
+      : "-",
+      taxon.lb_nom || "-",
+      taxon.nb_obs || "0",
+      taxon.nb_observers || "0",
+      taxon.last_obs || "-",
+      taxon.code_statut || "-",
+      taxon.threatened || "-",
+      taxon.patrimonial || "-",
+      taxon.protection_stricte || "-"
+    ]);
+
+  doc.autoTable({
+    startY: 20,
+    head: headers,
+    body: data,
+    styles: { fontSize: 9, cellPadding: 1 },
+    headStyles: { fillColor: [40, 60, 100], halign: 'center' },
+    margin: { top: 20 },
+    didParseCell: function (data) {
+      const threatenedColumnIndex = 8;
+      if (
+        data.section === 'body' &&
+        data.row.raw[threatenedColumnIndex]?.toLowerCase?.() === 'oui'
+      ) {
+        data.cell.styles.fillColor = [255, 200, 200];
+      }
+    }
+  });
+
+  const fileName = document.getElementById("exportPdfBtn").dataset.filename || "liste_taxons.pdf";
+  doc.save(fileName);
 });
