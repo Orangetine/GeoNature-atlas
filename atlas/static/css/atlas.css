@@ -128,13 +128,34 @@ a {
 /* # btn.btn-default n'existe plus en bs5 */
 .btn.btn-secondary {
   color: white;
-  border-color: var(--main-color);
-  background-color: var(--main-color) !important;
+  background-color: var(--main-color);
+  border: 1px solid var(--main-color);
+  transition: all 0.3s ease;
 }
 
-.btn.btn-secondary:hover {
-  background-color: white !important;
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus {
+  background-color: white;
   color: black;
+  border-color: var(--main-color);
+}
+
+.btn-outline-secondary {
+  color: black;
+  background-color: white;
+  border-color: var(--main-color);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--main-color);
+  color: white;
+  border-color: var(--main-color);
+}
+
+/* Garde le style actif quand le menu est ouvert */
+.btn-outline-secondary.dropdown-toggle[aria-expanded="true"] {
+  background-color: var(--main-color);
+  color: white;
   border-color: var(--main-color);
 }
 

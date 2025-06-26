@@ -77,3 +77,8 @@ img.statut_icon {
     left: 50%;
     top: 50%; 
 }
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #e0e0e0; 
+  color: black;
+}
