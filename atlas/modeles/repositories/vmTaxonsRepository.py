@@ -1,15 +1,17 @@
 # -*- coding:utf-8 -*-
 
 from flask import current_app
-from sqlalchemy.sql import select, distinct, func
+from sqlalchemy.sql import select, distinct, func, case
 from atlas.modeles.entities.vmObservations import VmObservations
 from atlas.modeles.entities.vmAreas import VmCorAreaSynthese
 from atlas.modeles.entities.vmMedias import VmMedias
 from atlas.modeles.entities.vmTaxons import VmTaxons
+from atlas.modeles.entities.vmStatutBdc import VmStatutBdc
 from atlas.modeles.entities.tBibTaxrefRang import TBibTaxrefRang
 
 from atlas.modeles import utils
 from atlas.env import db
+from atlas.app import create_app
 
 
 def getTaxonsTerritory():
@@ -80,34 +82,52 @@ def getTaxonsAreas(id_area):
             VmObservations.cd_ref,
             func.max(func.date_part("year", VmObservations.dateobs)).label("last_obs"),
             func.count(distinct(VmObservations.id_observation)).label("nb_obs"),
+            func.count(distinct(VmObservations.observateurs)).label("nb_observers"),
             VmTaxons.nom_complet_html,
             VmTaxons.nom_vern,
+            VmTaxons.lb_nom,
             VmTaxons.group2_inpn,
             VmTaxons.patrimonial,
             VmTaxons.protection_stricte,
             VmMedias.url,
             VmMedias.chemin,
             VmMedias.id_media,
+            VmStatutBdc.code_statut,
+            case(
+                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), 'oui'),
+                else_='non'
+            ).label("threatened")
         )
         .distinct()
         .select_from(obs_in_area)
         .join(VmObservations, VmObservations.id_observation == obs_in_area.c.id_observation)
         .join(VmTaxons, VmTaxons.cd_ref == VmObservations.cd_ref)
+        .join(VmStatutBdc, VmStatutBdc.cd_ref == VmTaxons.cd_ref)
         .outerjoin(
             VmMedias, (VmMedias.cd_ref == VmObservations.cd_ref) & (VmMedias.id_type == id_photo)
         )
+        .filter(VmStatutBdc.cd_type_statut == 'LRR',
+                VmStatutBdc.cd_sig == 'INSEER11')
         .group_by(
             VmObservations.cd_ref,
             VmTaxons.nom_vern,
             VmTaxons.nom_complet_html,
+            VmTaxons.lb_nom,
             VmTaxons.group2_inpn,
             VmTaxons.patrimonial,
             VmTaxons.protection_stricte,
             VmMedias.url,
             VmMedias.chemin,
             VmMedias.id_media,
+            VmStatutBdc.code_statut,
         )
-        .order_by(func.count(distinct(VmObservations.id_observation)).desc())
+        .order_by(
+            case(
+                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), 'oui'),
+                else_='non'
+            ).desc(),
+            func.count(distinct(VmObservations.id_observation)).desc()
+        )
     )
     results = db.session.execute(req).all()
     taxonAreasList = list()
@@ -116,7 +136,9 @@ def getTaxonsAreas(id_area):
         temp = {
             "nom_complet_html": r.nom_complet_html,
             "nb_obs": r.nb_obs,
+            "nb_observers": r.nb_observers,
             "nom_vern": r.nom_vern,
+            "lb_nom" : r.lb_nom,
             "cd_ref": r.cd_ref,
             "last_obs": r.last_obs,
             "group2_inpn": utils.deleteAccent(r.group2_inpn),
@@ -124,11 +146,18 @@ def getTaxonsAreas(id_area):
             "protection_stricte": r.protection_stricte,
             "path": utils.findPath(r),
             "id_media": r.id_media,
+            "code_statut": r.code_statut,
+            "threatened": r.threatened,
         }
         taxonAreasList.append(temp)
         nbObsTotal = nbObsTotal + r.nb_obs
     return {"taxons": taxonAreasList, "nbObsTotal": nbObsTotal}
 
+if __name__ == "__main__":
+    app = create_app()
+    with app.app_context():
+        res = getTaxonsAreas(78)
+        print(res)
 
 def getTaxonsChildsList(cd_ref):
     id_photo = current_app.config["ATTR_MAIN_PHOTO"]
