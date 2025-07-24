@@ -19,6 +19,7 @@ WITH areas AS (
 	    s.date_min AS dateobs,
 	    s.observers AS observateurs,
 	    (s.altitude_min + s.altitude_max) / 2 AS altitude_retenue,
+		s.id_nomenclature_bio_status,
 	    CASE
 		WHEN dl.cd_nomenclature = '1' THEN
 			(SELECT centroid_4326 FROM areas a WHERE a.id_synthese = s.id_synthese AND type_code = 'COM' LIMIT 1)
@@ -39,6 +40,7 @@ WITH areas AS (
  SELECT d.id_synthese,
     d.id_dataset,
     d.cd_nom,
+	d.id_nomenclature_bio_status,
     d.dateobs,
     d.observateurs,
     d.altitude_retenue,
