@@ -32,6 +32,7 @@
         var areaInfos = {{ areaInfos | tojson }};
         var url_limit_territory = "{{url_for('static', filename='custom/territoire.json') }}";
         const taxonsData = {{ listTaxons.taxons | tojson | safe }};
+        const threatenedTaxons = {{ threatenedTaxonsCdRef | tojson | safe }};
         const translations = {
             "nb_observations": `{{ _('obs.number.s') }}`
         };
