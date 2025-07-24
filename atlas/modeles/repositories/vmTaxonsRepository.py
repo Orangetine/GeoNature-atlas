@@ -5,13 +5,14 @@ from sqlalchemy.sql import select, distinct, func, case
 from atlas.modeles.entities.vmObservations import VmObservations
 from atlas.modeles.entities.vmAreas import VmCorAreaSynthese
 from atlas.modeles.entities.vmMedias import VmMedias
-from atlas.modeles.entities.vmTaxons import VmTaxons
+from atlas.modeles.entities.vmTaxons import VmTaxons, VmTaxonsAreas
 from atlas.modeles.entities.vmStatutBdc import VmStatutBdc
 from atlas.modeles.entities.tBibTaxrefRang import TBibTaxrefRang
 
 from atlas.modeles import utils
 from atlas.env import db
 from atlas.app import create_app
+import time
 
 
 def getTaxonsTerritory():
@@ -94,15 +95,15 @@ def getTaxonsAreas(id_area):
             VmMedias.id_media,
             VmStatutBdc.code_statut,
             case(
-                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), 'oui'),
-                else_='non'
+                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), True),
+                else_=False
             ).label("threatened")
         )
         .distinct()
         .select_from(obs_in_area)
         .join(VmObservations, VmObservations.id_observation == obs_in_area.c.id_observation)
         .join(VmTaxons, VmTaxons.cd_ref == VmObservations.cd_ref)
-        .join(VmStatutBdc, VmStatutBdc.cd_ref == VmTaxons.cd_ref)
+        .outerjoin(VmStatutBdc, VmStatutBdc.cd_ref == VmTaxons.cd_ref)
         .outerjoin(
             VmMedias, (VmMedias.cd_ref == VmObservations.cd_ref) & (VmMedias.id_type == id_photo)
         )
@@ -123,8 +124,8 @@ def getTaxonsAreas(id_area):
         )
         .order_by(
             case(
-                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), 'oui'),
-                else_='non'
+                (VmStatutBdc.code_statut.in_(['VU', 'EN', 'CR']), True),
+                else_=False
             ).desc(),
             func.count(distinct(VmObservations.id_observation)).desc()
         )
@@ -153,10 +154,177 @@ def getTaxonsAreas(id_area):
         nbObsTotal = nbObsTotal + r.nb_obs
     return {"taxons": taxonAreasList, "nbObsTotal": nbObsTotal}
 
+# With distinct the result in a array not an object, 0: lb_nom, 1: nom_vern
+def getTaxonsAreas_origine(id_area):
+    id_photo = current_app.config["ATTR_MAIN_PHOTO"]
+    obs_in_area = (
+        select(distinct(VmObservations.id_observation).label("id_observation"))
+        .join(VmCorAreaSynthese, VmCorAreaSynthese.id_synthese == VmObservations.id_observation)
+        .filter(VmCorAreaSynthese.id_area == id_area)
+    ).subquery()
+    req = (
+        select(
+            VmObservations.cd_ref,
+            func.max(func.date_part("year", VmObservations.dateobs)).label("last_obs"),
+            func.count(distinct(VmObservations.id_observation)).label("nb_obs"),
+            VmTaxons.nom_complet_html,
+            VmTaxons.nom_vern,
+            VmTaxons.group2_inpn,
+            VmTaxons.patrimonial,
+            VmTaxons.protection_stricte,
+            VmMedias.url,
+            VmMedias.chemin,
+            VmMedias.id_media,
+        )
+        .distinct()
+        .select_from(obs_in_area)
+        .join(VmObservations, 
+              VmObservations.id_observation == obs_in_area.c.id_observation)
+        .join(VmTaxons, VmTaxons.cd_ref == VmObservations.cd_ref)
+        .outerjoin(
+            VmMedias, (VmMedias.cd_ref == VmObservations.cd_ref) & (VmMedias.id_type == id_photo)
+        )
+        .group_by(
+            VmObservations.cd_ref,
+            VmTaxons.nom_vern,
+            VmTaxons.nom_complet_html,
+            VmTaxons.group2_inpn,
+            VmTaxons.patrimonial,
+            VmTaxons.protection_stricte,
+            VmMedias.url,
+            VmMedias.chemin,
+            VmMedias.id_media,
+        )
+        .order_by(func.count(distinct(VmObservations.id_observation)).desc())
+    )
+    results = db.session.execute(req).all()
+    taxonAreasList = list()
+    nbObsTotal = 0
+    for r in results:
+        temp = {
+            "nom_complet_html": r.nom_complet_html,
+            "nb_obs": r.nb_obs,
+            "nom_vern": r.nom_vern,
+            "cd_ref": r.cd_ref,
+            "last_obs": r.last_obs,
+            "group2_inpn": utils.deleteAccent(r.group2_inpn),
+            "patrimonial": r.patrimonial,
+            "protection_stricte": r.protection_stricte,
+            "path": utils.findPath(r),
+            "id_media": r.id_media,
+        }
+        taxonAreasList.append(temp)
+        nbObsTotal = nbObsTotal + r.nb_obs
+    return {"taxons": taxonAreasList, "nbObsTotal": nbObsTotal}
+
+def getTaxonsAreas_bis(id_area):
+    id_photo = current_app.config["ATTR_MAIN_PHOTO"]
+    req = (
+        select(
+            VmTaxonsAreas.cd_ref,
+            func.max(func.date_part("year", VmTaxonsAreas.dateobs)).label("last_obs"),
+            func.count(distinct(VmTaxonsAreas.id_observation)).label("nb_obs"),
+            VmTaxonsAreas.nom_complet_html,
+            VmTaxonsAreas.nom_vern,
+            VmTaxonsAreas.group2_inpn,
+            VmTaxonsAreas.patrimonial,
+            VmTaxonsAreas.protection_stricte,
+            VmMedias.url,
+            VmMedias.chemin,
+            VmMedias.id_media,
+        )
+        .distinct()
+        .outerjoin(
+            VmMedias, (VmMedias.cd_ref == VmTaxonsAreas.cd_ref) & (VmMedias.id_type == id_photo)
+        )
+        .filter(VmTaxonsAreas.id_area == id_area)
+        .group_by(
+            VmTaxonsAreas.cd_ref,
+            VmTaxonsAreas.nom_vern,
+            VmTaxonsAreas.nom_complet_html,
+            VmTaxonsAreas.group2_inpn,
+            VmTaxonsAreas.patrimonial,
+            VmTaxonsAreas.protection_stricte,
+            VmMedias.url,
+            VmMedias.chemin,
+            VmMedias.id_media,
+        )
+        .order_by(
+            func.count(distinct(VmTaxonsAreas.id_observation)).desc()
+        )
+    )
+    results = db.session.execute(req).all()
+    taxonAreasList = list()
+    nbObsTotal = 0
+    for r in results:
+        temp = {
+            "nom_complet_html": r.nom_complet_html,
+            "nb_obs": r.nb_obs,
+            "nom_vern": r.nom_vern,
+            "cd_ref": r.cd_ref,
+            "last_obs": r.last_obs,
+            "group2_inpn": utils.deleteAccent(r.group2_inpn),
+            "patrimonial": r.patrimonial,
+            "protection_stricte": r.protection_stricte,
+            "path": utils.findPath(r),
+            "id_media": r.id_media,
+        }
+        taxonAreasList.append(temp)
+        nbObsTotal = nbObsTotal + r.nb_obs
+    return {"taxons": taxonAreasList, "nbObsTotal": nbObsTotal}
+
+def getThreatenedTaxonsAreas(id_area):
+    req = (
+        select(
+            VmTaxonsAreas.cd_ref,
+            VmTaxonsAreas.threatened,
+            VmTaxonsAreas.code_statut,
+            func.count(distinct(VmTaxonsAreas.cd_ref)).filter(
+                                VmTaxonsAreas.threatened == True)
+            .label("nb_threatened"),
+        )
+        .filter(
+            VmTaxonsAreas.cd_sig == 'INSEER11',
+            VmTaxonsAreas.threatened == True,
+            VmTaxonsAreas.id_area == id_area,
+        )
+        .group_by(
+            VmTaxonsAreas.cd_ref,
+            VmTaxonsAreas.threatened,
+            VmTaxonsAreas.code_statut
+        )
+    )
+    results = db.session.execute(req).all()
+    taxonThreatenedAreasList = list()
+    cdRefThreatenedAreasList = list()
+    nbThreatenedTotal = 0
+    for r in results:
+        temp = {
+            "cd_ref": r.cd_ref,
+            "threatened": r.threatened,
+            "code_statut": r.code_statut, 
+            "nb_threatened": r.nb_threatened
+        }
+        taxonThreatenedAreasList.append(temp)
+        cdRefThreatenedAreasList.append(r.cd_ref)
+        nbThreatenedTotal = nbThreatenedTotal + r.nb_threatened
+    return {
+        "threatened_taxons": taxonThreatenedAreasList, 
+        "nbThreatenedTotal": nbThreatenedTotal,
+        "cd_refs" : cdRefThreatenedAreasList 
+    }
+
+
 if __name__ == "__main__":
     app = create_app()
     with app.app_context():
-        res = getTaxonsAreas(78)
+        # # start = time.time()
+        # res = getTaxonsAreas_bis(78)
+        # res2 = getTaxonsAreas_origine(78)
+        # # end = time.time()
+        # print(len(res["taxons"]), len(res2["taxons"]))
+        # print(res  == res2, sep = "\n\n\n")
+        res =  getThreatenedTaxonsAreas(28611)
         print(res)
 
 def getTaxonsChildsList(cd_ref):
