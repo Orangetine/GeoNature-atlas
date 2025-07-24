@@ -62,7 +62,7 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
   const rows = [[
     "CdRef", "Groupe taxonomique", "Nom vernaculaire", "Nom scientifique",
     "Nombre d'occurrences", "Nombre d'observateurs",  "Dernière observation", 
-    "Code statut", "Menacé", "Patrimonial", "Protection stricte"
+    "Menacé", "Patrimonial", "Protection stricte"
   ]];
 
   // Filtrer les taxons visibles dans taxonsData
@@ -78,13 +78,14 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
     const nbObs = taxon.nb_obs || "0";
     const nbObservers = taxon.nb_observers || "0";
     const lastYear = taxon.last_obs || "-";
-    const codeStatut = taxon.code_statut || "-";
     const patrimonial = taxon.patrimonial || "-";
     const strictProtection = taxon.protection_stricte || "-";
-    const threatened = taxon.threatened || "-";
+
+    // Ajout de la colonne "Menacé" en tant que true/false
+    const isThreatened = threatenedTaxons.includes(Number(taxon.cd_ref));  
 
     rows.push([cdRef, taxonomicGroup, nomVern, nomSci, nbObs, 
-      nbObservers, lastYear, codeStatut, threatened, patrimonial, strictProtection]);
+      nbObservers, lastYear, isThreatened, patrimonial, strictProtection]);
   });
 
   const fileName = document.getElementById("exportCsvBtn").dataset.filename || "liste_taxons.csv";
@@ -130,7 +131,6 @@ document.getElementById("exportPdfBtn").addEventListener("click", async () => {
       "Nombre d’occurrences",
       "Nombre d'observateurs",
       "Dernière observation",
-      "Code statut",
       "Menacé",
       "Patrimonial",
       "Protection stricte"
@@ -139,21 +139,22 @@ document.getElementById("exportPdfBtn").addEventListener("click", async () => {
 
   const data = taxonsData
     .filter(taxon => visibleCdRefs.includes(String(taxon.cd_ref)))
-    .map(taxon => [
-      taxon.cd_ref || "-",
-      taxon.group2_inpn || "-",
-      (typeof taxon.nom_vern === "string" && taxon.nom_vern) 
-      ? taxon.nom_vern.split(',')[0].trim() 
-      : "-",
-      taxon.lb_nom || "-",
-      taxon.nb_obs || "0",
-      taxon.nb_observers || "0",
-      taxon.last_obs || "-",
-      taxon.code_statut || "-",
-      taxon.threatened || "-",
-      taxon.patrimonial || "-",
-      taxon.protection_stricte || "-"
-    ]);
+    .map(taxon => {
+      const isThreatened = threatenedTaxons.includes(Number(taxon.cd_ref)) ? true : false;
+      return [
+        taxon.cd_ref || "-",
+        taxon.group2_inpn || "-",
+        (typeof taxon.nom_vern === "string" && taxon.nom_vern) 
+        ? taxon.nom_vern.split(',')[0].trim() 
+        : "-",
+        taxon.lb_nom || "-",
+        taxon.nb_obs || "0",
+        taxon.nb_observers || "0",
+        taxon.last_obs || "-",
+        isThreatened,
+        taxon.patrimonial || "-",
+        taxon.protection_stricte || "-"
+    ]});
 
   doc.autoTable({
     startY: 20,
@@ -163,10 +164,10 @@ document.getElementById("exportPdfBtn").addEventListener("click", async () => {
     headStyles: { fillColor: [40, 60, 100], halign: 'center' },
     margin: { top: 20 },
     didParseCell: function (data) {
-      const threatenedColumnIndex = 8;
+      const threatenedColumnIndex = 7;
       if (
         data.section === 'body' &&
-        data.row.raw[threatenedColumnIndex]?.toLowerCase?.() === 'oui'
+        data.row.raw[threatenedColumnIndex] ===  true
       ) {
         data.cell.styles.fillColor = [255, 200, 200];
       }
