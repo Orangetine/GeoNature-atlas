@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
-from sqlalchemy import String, Float, Text, ForeignKey
+from sqlalchemy import String, Float, Text, Boolean, ForeignKey
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from atlas.env import db
+import datetime
 
 from typing import List
 
@@ -61,3 +63,28 @@ class VmTaxonsMostView(db.Model):
     url: Mapped[str] = mapped_column(String(255))
     chemin: Mapped[str] = mapped_column(String(255))
     id_type: Mapped[int] = mapped_column()
+
+class VmTaxonsAreas(db.Model):
+    __tablename__ = "vm_taxons_areas"
+    __table_args__= {"schema" : "atlas"}
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    id_area: Mapped[int] = mapped_column()
+    id_observation: Mapped[int] = mapped_column()
+    cd_ref: Mapped[int] = mapped_column()
+    dateobs: Mapped[datetime.date] = mapped_column()
+    observateurs: Mapped[str] = mapped_column(String(100))
+    nom_complet_html: Mapped[str] = mapped_column(String(500))
+    nom_vern: Mapped[str] = mapped_column(String(1000))
+    lb_nom: Mapped[str] = mapped_column(String(250))
+    group2_inpn: Mapped[str] = mapped_column(String(50))
+    patrimonial: Mapped[str] = mapped_column(Text)
+    protection_stricte: Mapped[str] = mapped_column(Text)
+    reproduction: Mapped[bool] = mapped_column(Boolean)
+    reproduction_year: Mapped[int] = mapped_column()
+    code_statut: Mapped[str] = mapped_column(String(50))
+    cd_type_statut: Mapped[str] = mapped_column(String(50))
+    cd_sig: Mapped[str] = mapped_column(String(50))
+    threatened: Mapped[bool] = mapped_column(Boolean)
+    threatened_species: Mapped[dict] = mapped_column(JSONB)
+    protected_species: Mapped[dict] = mapped_column(JSONB)
