@@ -12,6 +12,7 @@ const groupSet = new Set(taxonsData.map(t => t.group2_inpn).filter(Boolean));
 const groupFilterList = document.getElementById("groupFilterList");
 groupFilterList.innerHTML = `
   <li><a class="dropdown-item" href="#" data-group="all">Tous les groupes</a></li>
+  <li><a class="dropdown-item" href="#" data-group="threatened">Menacé</a></li>
   ${[...groupSet].sort().map(group =>
     `<li><a class="dropdown-item" href="#" data-group="${group}">${group}</a></li>`
   ).join("")}
@@ -26,7 +27,13 @@ function applyCombinedFilter() {
   $("#taxonList li").each(function () {
     const matchesText = $(this).text().toLowerCase().includes(text);
     const group = $(this).find(".d-none").text().trim();
-    const matchesGroup = selectedGroup === "all" || group === selectedGroup;
+    let matchesGroup = selectedGroup === "all" || group === selectedGroup;
+
+    // Si le groupe sélectionné est "Menacé", vérifier si le cd_ref du taxon est dans la liste menacée
+    if (selectedGroup === "threatened") {
+      const cdRef = $(this).attr("cdref");  // Suppose que chaque <li> a un attribut data-cdRef
+      matchesGroup = threatenedTaxons.includes(Number(cdRef));  // Vérifier si le cd_ref du taxon est menacé
+    }
 
     this.style.setProperty("display", matchesText && matchesGroup ? "flex" : "none", "important");
   });
@@ -50,7 +57,7 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
 
   const visibleCdRefs = Array.from(document.querySelectorAll("#taxonList li"))
     .filter(li => window.getComputedStyle(li).display !== "none")
-    .map(li => li.getAttribute("cdRef"))
+    .map(li => li.getAttribute("cdref"))
     .filter(cdref => cdref !== null);
 
   if (visibleCdRefs.length === 0) {
