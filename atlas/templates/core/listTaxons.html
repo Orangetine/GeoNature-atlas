@@ -87,7 +87,7 @@
                                     {% endif %}
                                 </strong>
                             </h5>
-                            {% if taxon.threatened == 'oui' %}
+                            {% if taxon.cd_ref in threatenedTaxonsCdRef %}
                                 <img src="{{ url_for('static', filename='images/picto_menace.png') }}"
                                      alt="Menacé"
                                      style="width: 30px; height: 30px; margin-left: 10px;"
