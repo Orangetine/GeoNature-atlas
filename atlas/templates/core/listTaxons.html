@@ -11,12 +11,12 @@
         <!-- Filtres -->
         <div class="row g-2">
             <div class="col-auto dropdown">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="groupFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Groupe : <span id="currentGroupLabel">Tous</span>
-                </button>
-                <ul class="dropdown-menu" id="groupFilterList" aria-labelledby="groupFilterDropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="groupFilterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                Filtre : <span id="currentGroupLabel">Tous</span>
+            </button>
+            <ul class="dropdown-menu p-2" id="groupFilterList" aria-labelledby="groupFilterDropdown" style="min-width: 260px">
                 <!-- Groupes injectés dynamiquement -->
-                </ul>
+            </ul>
             </div>
             <div class="col">
                 <input id="taxonInput" type="text" class="form-control form-control-sm" placeholder="{{ _('filter.species') }}" />
@@ -92,7 +92,7 @@
                                      alt="Menacé"
                                      style="width: 30px; height: 30px; margin-left: 10px;"
                                      data-bs-toggle="tooltip"
-                                     title="{{ _('threatened_species') }}" />
+                                     title="{{ _('threatened_specie') }}" />
                             {% endif %}
                         </div>    
 
