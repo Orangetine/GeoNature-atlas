@@ -31,7 +31,8 @@
     }
 }
 @media (min-width: 900px) {
-    #observations_and_species.active {
+    #observations_and_species.active,
+    #threatened_species.active {
         display: flex;
     }
 
