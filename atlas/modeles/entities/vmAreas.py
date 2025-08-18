@@ -59,8 +59,9 @@ class VmAreaStatTaxonomyGroup(db.Model):
 
     nb_obs: Mapped[int] = mapped_column()
     nb_species: Mapped[int] = mapped_column()
-    nb_patrominal: Mapped[int] = mapped_column()
+    nb_patrimonial: Mapped[int] = mapped_column()
     nb_taxon_protege: Mapped[int] = mapped_column()
+    nb_taxon_threatened: Mapped[int] = mapped_column()
     nb_species_in_teritory: Mapped[int] = mapped_column()
 
 
@@ -77,6 +78,7 @@ class VmAreaStats(db.Model):
     yearmax: Mapped[int] = mapped_column()
     nb_taxon_patrimonial: Mapped[int] = mapped_column()
     nb_taxon_protege: Mapped[int] = mapped_column()
+    nb_taxon_threatened: Mapped[int] = mapped_column()
     description: Mapped[str] = mapped_column(Text)
 
     def as_dict(self):
