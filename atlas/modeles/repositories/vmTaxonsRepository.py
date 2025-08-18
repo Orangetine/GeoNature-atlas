@@ -279,9 +279,6 @@ def getThreatenedTaxonsAreas(id_area):
             VmTaxonsAreas.cd_ref,
             VmTaxonsAreas.threatened,
             VmTaxonsAreas.code_statut,
-            func.count(distinct(VmTaxonsAreas.cd_ref)).filter(
-                                VmTaxonsAreas.threatened == True)
-            .label("nb_threatened"),
         )
         .filter(
             VmTaxonsAreas.cd_sig == 'INSEER11',
@@ -297,21 +294,18 @@ def getThreatenedTaxonsAreas(id_area):
     results = db.session.execute(req).all()
     taxonThreatenedAreasList = list()
     cdRefThreatenedAreasList = list()
-    nbThreatenedTotal = 0
     for r in results:
         temp = {
             "cd_ref": r.cd_ref,
             "threatened": r.threatened,
             "code_statut": r.code_statut, 
-            "nb_threatened": r.nb_threatened
         }
         taxonThreatenedAreasList.append(temp)
         cdRefThreatenedAreasList.append(r.cd_ref)
-        nbThreatenedTotal = nbThreatenedTotal + r.nb_threatened
     return {
         "threatened_taxons": taxonThreatenedAreasList, 
-        "nbThreatenedTotal": nbThreatenedTotal,
-        "cd_refs" : cdRefThreatenedAreasList 
+        "nb_threatened_species": len(cdRefThreatenedAreasList) ,
+        "cd_refs" : cdRefThreatenedAreasList,
     }
 
 
@@ -324,7 +318,7 @@ if __name__ == "__main__":
         # # end = time.time()
         # print(len(res["taxons"]), len(res2["taxons"]))
         # print(res  == res2, sep = "\n\n\n")
-        res =  getThreatenedTaxonsAreas(28611)
+        res =  getThreatenedTaxonsAreas(5423)
         print(res)
 
 def getTaxonsChildsList(cd_ref):
