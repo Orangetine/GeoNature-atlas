@@ -12,6 +12,11 @@
                     <a class="nav-link" data-bs-toggle="tab" href="#observations_and_species">{{ _('observations_and_species') }}</a>
                 </li>
             {% endif %}
+            {% if configuration.MENACE %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#threatened_species">{{ _('threatened_species') }}</a>
+                </li>
+            {% endif %}
             {% if configuration.ORGANISM_MODULE %}
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#data_sources">{{ _('data_sources') }}</a>
@@ -45,6 +50,22 @@
                         </div>
                     </div>
                 </div>
+            {% endif %}
+            {% if configuration.MENACE %}
+            <div id="threatened_species" class="tab-pane fade">
+                <div class="infos_biodiversity">
+                    <div><strong>Nombre d'espèces menacées</strong> sur le territoire</div>
+                    <div class="chart-container" style="position: relative;">
+                        <canvas id="threatenedSpeciesChart" style="padding: 0.5rem;"></canvas>
+                    </div>
+                </div>
+                <div class="infos_observations">
+                    <div><strong>Nombre d'espèces menacées</strong> par groupe taxonomique</div>
+                    <div class="chart-container" style="position: relative;">
+                        <canvas id="threatenedSpeciesByTaxoGroupChart" style="padding: 0.5rem;"></canvas>
+                    </div>
+                </div>
+            </div>
             {% endif %}
             {% if configuration.ORGANISM_MODULE %}
                 <div id="data_sources" class="tab-pane fade">
