@@ -35,7 +35,8 @@
             </div>
             {% if configuration.PROTECTION %}
             <div class="col-sm text-center border-start">
-                <img class="statut_icon" src="{{ url_for('static', filename='images/logo_protection.png') }}"/>
+                <img class="statut_icon" style="width:24px; height:24px;"
+                    src="{{ url_for('static', filename='images/logo_protection.png') }}"/>
                 <br><strong>{{ stats_area.nb_taxon_protege }}</strong>
                 <br>{{ _('protected_species')|lower }}
             </div>
@@ -46,6 +47,14 @@
                 <br><strong>{{ stats_area.nb_taxon_patrimonial }}</strong>
                 <!-- TODO : ce terme n'est pas traduit -->
                 <br>{{ _('species')|lower }} {{ config.PATRIMONIALITE.label_pluriel|lower }}
+            </div>
+            {% endif %}
+            {% if configuration.MENACE %}
+            <div class="col-sm text-center border-start">
+                <img class="statut_icon" style="width:29px; height:29px;"
+                    src="{{ url_for('static', filename='images/picto_menace.png') }}"/>
+                <br><strong>{{ stats_area.nb_taxon_threatened }}</strong>
+                <br>{{ _('threatened_species')|lower }}
             </div>
             {% endif %}
             {% for area in areaInfos.areasParent %}
