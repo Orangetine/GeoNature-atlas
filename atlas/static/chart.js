@@ -268,7 +268,6 @@ function threatenedByTaxoGroupChartConfig(element, values) {
     const threatened = [];
     const notThreatened = [];
 
-    // Construire les datasets à partir de tes données
     Object.keys(values).forEach(key => {
         labels.push(key);
         threatened.push(values[key].nb_threatened_species);
