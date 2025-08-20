@@ -224,6 +224,7 @@ def getTaxonsAreas_bis(id_area):
             VmTaxonsAreas.cd_ref,
             func.max(func.date_part("year", VmTaxonsAreas.dateobs)).label("last_obs"),
             func.count(distinct(VmTaxonsAreas.id_observation)).label("nb_obs"),
+            func.count(distinct(VmTaxonsAreas.observateurs)).label("nb_observers"),
             VmTaxonsAreas.nom_complet_html,
             VmTaxonsAreas.nom_vern,
             VmTaxonsAreas.lb_nom,
@@ -262,6 +263,7 @@ def getTaxonsAreas_bis(id_area):
         temp = {
             "nom_complet_html": r.nom_complet_html,
             "nb_obs": r.nb_obs,
+            "nb_observers": r.nb_observers,
             "nom_vern": r.nom_vern,
             "lb_nom": r.lb_nom,
             "cd_ref": r.cd_ref,
