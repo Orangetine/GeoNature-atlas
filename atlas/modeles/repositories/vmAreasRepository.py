@@ -48,7 +48,7 @@ def searchAreas(search, limit=50):
 def getAreaFromIdArea(id_area):
     area = (
         db.session.query(
-            VmAreas.area_name, VmAreas.id_area, VmAreas.area_geojson, VmBibAreasTypes.type_name
+            VmAreas.area_name, VmAreas.area_code, VmAreas.id_area, VmAreas.area_geojson, VmBibAreasTypes.type_name
         )
         .join(VmBibAreasTypes, VmAreas.id_type == VmBibAreasTypes.id_type)
         .filter(VmAreas.id_area == id_area)
@@ -60,6 +60,7 @@ def getAreaFromIdArea(id_area):
     area_dict = {
         "areaName": area.area_name,
         "areaCode": str(area.id_area),
+        "realAreaCode": str(area.area_code),
         "areaGeoJson": ast.literal_eval(area.area_geojson),
         "typeName": area.type_name,
         "areasParent": [],
