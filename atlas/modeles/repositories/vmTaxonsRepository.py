@@ -226,6 +226,7 @@ def getTaxonsAreas_bis(id_area):
             func.count(distinct(VmTaxonsAreas.id_observation)).label("nb_obs"),
             VmTaxonsAreas.nom_complet_html,
             VmTaxonsAreas.nom_vern,
+            VmTaxonsAreas.lb_nom,
             VmTaxonsAreas.group2_inpn,
             VmTaxonsAreas.patrimonial,
             VmTaxonsAreas.protection_stricte,
@@ -241,6 +242,7 @@ def getTaxonsAreas_bis(id_area):
         .group_by(
             VmTaxonsAreas.cd_ref,
             VmTaxonsAreas.nom_vern,
+            VmTaxonsAreas.lb_nom,
             VmTaxonsAreas.nom_complet_html,
             VmTaxonsAreas.group2_inpn,
             VmTaxonsAreas.patrimonial,
@@ -261,6 +263,7 @@ def getTaxonsAreas_bis(id_area):
             "nom_complet_html": r.nom_complet_html,
             "nb_obs": r.nb_obs,
             "nom_vern": r.nom_vern,
+            "lb_nom": r.lb_nom,
             "cd_ref": r.cd_ref,
             "last_obs": r.last_obs,
             "group2_inpn": utils.deleteAccent(r.group2_inpn),
