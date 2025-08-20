@@ -44,7 +44,7 @@ function buildGroupFilterMenu() {
     <li class="px-1">
         <div class="form-check">
         <input class="form-check-input" type="checkbox" id="g-threat" data-group="threatened">
-        <label class="form-check-label" for="g-threat">Menacé</label>
+        <label class="form-check-label" for="g-threat">Menacés</label>
         </div>
     </li>
     <li><hr class="dropdown-divider"></li>
@@ -67,11 +67,11 @@ function updateLabel() {
     const includesThreat = selectedGroups.has("threatened");
     const shown = names.slice(0, 3).join(", ") + (names.length > 3 ? `, +${names.length - 3}` : "");
     if (names.length && includesThreat) {
-        span.textContent = `${shown} + Menacé`;
+        span.textContent = `${shown} + Menacés`;
     } else if (names.length) {
         span.textContent = shown;
     } else {
-        span.textContent = "Menacé";
+        span.textContent = "Menacés";
     }
 }
 
@@ -198,7 +198,7 @@ function exportCsv(){
         nbObservers, lastYear, isThreatened, patrimonial, strictProtection]);
     });
 
-    const fileName = document.getElementById("exportCsvBtn").dataset.filename || "liste_taxons.csv";
+    const fileName = document.getElementById("exportCsvBtn").dataset.filename;
     const csvContent = rows.map(row => row.join(";")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -228,12 +228,15 @@ function exportPdf() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "landscape" });
 
-    doc.setFontSize(12);
-    doc.text("Liste des taxons visibles", 14, 15);
+    const fileName = document.getElementById("exportPdfBtn").dataset.filename;
+    const title = fileName.replace(/\.pdf$/i, "");
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFontSize(14.5);
+    doc.text(title, pageWidth / 2, 15, { align: "center" });
 
     const headers = [
         [
-        "Cd_ref",
         "Groupe taxonomique",
         "Nom vernaculaire",
         "Nom scientifique",
@@ -251,7 +254,6 @@ function exportPdf() {
         .map(taxon => {
         const isThreatened = threatenedTaxons.includes(Number(taxon.cd_ref)) ? true : false;
         return [
-            taxon.cd_ref || "-",
             taxon.group2_inpn || "-",
             (typeof taxon.nom_vern === "string" && taxon.nom_vern) 
             ? taxon.nom_vern.split(',')[0].trim() 
@@ -266,14 +268,19 @@ function exportPdf() {
         ]});
 
     doc.autoTable({
-        startY: 20,
+        startY: 25,
         head: headers,
         body: data,
         styles: { fontSize: 9, cellPadding: 1 },
         headStyles: { fillColor: [40, 60, 100], halign: 'center' },
         margin: { top: 20 },
+        columnStyles: {
+            3: { halign: 'center' }, // Nombre d'occurrences
+            4: { halign: 'center' }, // Nombre d'observateurs
+            5: { halign: 'center' }  // Dernière observation
+        },
         didParseCell: function (data) {
-        const threatenedColumnIndex = 7;
+        const threatenedColumnIndex = 6;
         if (
             data.section === 'body' &&
             data.row.raw[threatenedColumnIndex] ===  true
@@ -283,7 +290,6 @@ function exportPdf() {
         }
     });
 
-    const fileName = document.getElementById("exportPdfBtn").dataset.filename || "liste_taxons.pdf";
     doc.save(fileName);
 }
 
