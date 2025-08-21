@@ -36,6 +36,7 @@
         const translations = {
             "nb_observations": `{{ _('obs.number.s') }}`
         };
+        const MENACE_ENABLED = {{ 'true' if configuration.MENACE else 'false' }};
     </script>
     <script src="{{ url_for('static', filename='custom/maps-custom.js') }}"></script>
     <script src="{{ url_for('static', filename='listeEspeces.js') }}"></script>
