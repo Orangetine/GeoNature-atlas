@@ -130,7 +130,8 @@ def get_species_by_taxonomic_group(connection, id_area):
     sql = """
     SELECT nb_species,
         group2_inpn,
-        nb_patrominal,
+        nb_patrimonial,
+        nb_taxon_threatened,
         nb_species_in_teritory
     FROM atlas.vm_area_stats_by_taxonomy_group
     WHERE id_area = :id_area;
@@ -141,7 +142,8 @@ def get_species_by_taxonomic_group(connection, id_area):
     for r in result:
         info_chart[r.group2_inpn] = {
             "nb_species": r.nb_species,
-            "nb_patrimonial": r.nb_patrominal,
+            "nb_patrimonial": r.nb_patrimonial,
+            "nb_threatened_species": r.nb_taxon_threatened,
             "nb_species_in_teritory": r.nb_species_in_teritory,
         }
     return info_chart
