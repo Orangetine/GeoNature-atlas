@@ -23,6 +23,20 @@ const selectedGroups = new Set(["all"]); // par défaut “Tous”
 function buildGroupFilterMenu() {
     const groupSet = new Set(taxonsData.map(t => t.group2_inpn).filter(Boolean));
     const groupFilterList = document.getElementById("groupFilterList");
+    
+    // Threatened filter if the configuration variable is enabled.
+    let menaceItem = "";
+    if (MENACE_ENABLED) {
+        menaceItem = `
+        <li class="px-1">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="g-threat" data-group="threatened">
+                <label class="form-check-label" for="g-threat">Menacés</label>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        `;
+    }
 
     const groupItemsHtml = [...groupSet].sort().map((group, i) => `
     <li class="px-1">
@@ -41,13 +55,7 @@ function buildGroupFilterMenu() {
         </div>
     </li>
     <li><hr class="dropdown-divider"></li>
-    <li class="px-1">
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="g-threat" data-group="threatened">
-        <label class="form-check-label" for="g-threat">Menacés</label>
-        </div>
-    </li>
-    <li><hr class="dropdown-divider"></li>
+    ${menaceItem}
     ${groupItemsHtml}
     <li><hr class="dropdown-divider"></li>
     <li class="d-flex gap-2 px-1">
