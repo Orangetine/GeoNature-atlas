@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from sqlalchemy import Column, Integer, MetaData, String, Table, Float
+from sqlalchemy import Column, Integer, MetaData, String, Table, Float, Boolean, Text, Date
 from sqlalchemy.ext.declarative import declarative_base
 
 from atlas.env import db
@@ -40,3 +40,28 @@ class VmTaxons(Base):
         autoload=True,
         autoload_with=db.engine,
     )
+    
+
+class VmTaxonsAreas(db.Model):
+    __tablename__ = "vm_taxons_areas"
+    __table_args__ = {"schema": "atlas"}
+
+    id = Column(Integer, primary_key=True)
+    id_area = Column(Integer)
+    id_observation = Column(Integer)
+    id_dataset = Column(Integer)
+    cd_ref = Column(Integer)
+    dateobs = Column(Date)
+    observateurs = Column(String(100))
+    nom_complet_html = Column(String(500))
+    nom_vern = Column(String(1000))
+    lb_nom = Column(String(250))
+    group2_inpn = Column(String(50))
+    patrimonial = Column(Text)
+    protection_stricte = Column(Text)
+    reproduction = Column(Boolean)
+    reproduction_year = Column(Integer)
+    code_statut = Column(String(50))
+    cd_type_statut = Column(String(50))
+    cd_sig = Column(String(50))
+    threatened = Column(Boolean)
