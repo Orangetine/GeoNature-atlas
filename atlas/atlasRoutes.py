@@ -378,7 +378,8 @@ def ficheArea(id_area):
     session = db.session
     connection = db.engine.connect()
 
-    listTaxons = vmTaxonsRepository.getTaxonsAreas(connection, id_area)
+    listTaxons = vmTaxonsRepository.getTaxonsAreas(session, id_area)
+    threatenedTaxonsCdRef = vmTaxonsRepository.getThreatenedTaxonsAreas(session, id_area)["cd_refs"]
     area = vmAreasRepository.getAreaFromIdArea(connection, id_area)
     stats_area = vmAreasRepository.getStatsByArea(connection, id_area)
 
@@ -388,6 +389,7 @@ def ficheArea(id_area):
     return render_template(
         "templates/areaSheet/_main.html",
         listTaxons=listTaxons,
+        threatenedTaxonsCdRef=threatenedTaxonsCdRef,
         stats_area=stats_area,
         areaInfos=area,
         DISPLAY_EYE_ON_LIST=True,
