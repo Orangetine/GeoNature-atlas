@@ -48,6 +48,14 @@
                 <br> {{ _('species')|lower }} {{config.PATRIMONIALITE.label_pluriel|lower}} 
             </div>
             {% endif %}
+            {% if configuration.MENACE %}
+            <div class="col-sm center border-left">
+                <img class="statut_icon" style="width:29px; height:29px;"
+                    src="{{ url_for('static', filename='images/picto_menace.png') }}"/>
+                <br><strong>{{ stats_area.nb_taxon_threatened }}</strong>
+                <br>{{ _('threatened_species')|lower }}
+            </div>
+            {% endif %}
             {% for area in areaInfos.areasParent %}
                 <div class="col-sm center border-left">
                     <i class="fa fa-city"></i>
