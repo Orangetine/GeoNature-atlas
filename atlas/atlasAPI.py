@@ -214,6 +214,12 @@ def rank_stat():
 def get_area_chart_valuesAPI(id_area):
     session = db.session
     connection = db.engine.connect()
+
+    stats = vmAreasRepository.getStatsByArea(connection, id_area)
+    
+    nb_species = stats["nb_species"]
+    nb_threatened_species = stats["nb_taxon_threatened"]
+
     species_by_taxonomic_group = vmAreasRepository.get_species_by_taxonomic_group(
         connection, id_area
     )
@@ -235,5 +241,7 @@ def get_area_chart_valuesAPI(id_area):
             "observations_by_taxonomic_group": observations_by_taxonomic_group,
             "nb_species_by_organism": nb_species_by_organism,
             "observations_by_organism": observations_by_organism,
+            "nb_species": nb_species,
+            "nb_threatened_species": nb_threatened_species,
         }
     )
