@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from atlas.env import db
 
@@ -14,5 +14,8 @@ class VmStatutBdc(db.Model):
     label_statut: Mapped[str] = mapped_column(String(250))
     cd_type_statut: Mapped[str] = mapped_column(String(50))
     lb_type_statut: Mapped[str] = mapped_column(String(250))
+    regroupement_type: Mapped[str] = mapped_column(String(250))
     cd_sig: Mapped[str] = mapped_column(String(50))
     lb_adm_tr: Mapped[str] = mapped_column(String(250))
+    full_citation: Mapped[str] = mapped_column(Text)
+    doc_url: Mapped[str] = mapped_column(Text)
