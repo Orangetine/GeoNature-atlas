@@ -71,6 +71,7 @@ class VmTaxonsAreas(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     id_area: Mapped[int] = mapped_column()
     id_observation: Mapped[int] = mapped_column()
+    id_dataset: Mapped[int] = mapped_column()
     cd_ref: Mapped[int] = mapped_column()
     dateobs: Mapped[datetime.date] = mapped_column()
     observateurs: Mapped[str] = mapped_column(String(100))
@@ -86,5 +87,3 @@ class VmTaxonsAreas(db.Model):
     cd_type_statut: Mapped[str] = mapped_column(String(50))
     cd_sig: Mapped[str] = mapped_column(String(50))
     threatened: Mapped[bool] = mapped_column(Boolean)
-    threatened_species: Mapped[dict] = mapped_column(JSONB)
-    protected_species: Mapped[dict] = mapped_column(JSONB)
