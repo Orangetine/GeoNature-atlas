@@ -197,7 +197,7 @@ scripts_sql=(
         "13.5.atlas.territory_stats.sql"
         "15.atlas.vm_bdc_statut.sql"
         "13.atlas.vm_observations_mailles.sql"
-        "20.grant.sql"
+        #"20.grant.sql"
         "atlas.refresh_materialized_view_data.sql"
 )
 for script in "${scripts_sql[@]}"
@@ -211,12 +211,12 @@ do
     echo "[$(date +'%H:%M:%S')] Passed - Duration : $((($SECONDS-$time_temp)/60))m$((($SECONDS-$time_temp)%60))s"
 done
 
-echo "[$(date +'%H:%M:%S')] Creating atlas.vm_mailles_territoire..."
-time_temp=$SECONDS
-export PGPASSWORD=$owner_atlas_pass;psql -d $db_name -U $owner_atlas -h $db_host -p $db_port  \
--f data/atlas/12.atlas.vm_mailles_territoire.sql \
--v type_maille=$type_maille &>> log/install_db.log
-echo "[$(date +'%H:%M:%S')] Passed - Duration : $((($SECONDS-$time_temp)/60))m$((($SECONDS-$time_temp)%60))s"
+# echo "[$(date +'%H:%M:%S')] Creating atlas.vm_mailles_territoire..."
+# time_temp=$SECONDS
+# export PGPASSWORD=$owner_atlas_pass;psql -d $db_name -U $owner_atlas -h $db_host -p $db_port  \
+# -f data/atlas/12.atlas.vm_mailles_territoire.sql \
+# -v type_maille=$type_maille &>> log/install_db.log
+# echo "[$(date +'%H:%M:%S')] Passed - Duration : $((($SECONDS-$time_temp)/60))m$((($SECONDS-$time_temp)%60))s"
 
 # FR: Création de la vue matérialisée vm_mailles_observations (nombre d'observations par maille et par taxon)
 # EN: Creation of the materialized view vm_meshes_observations (number of observations per mesh and per taxon)

@@ -1,3 +1,4 @@
+DROP MATERIALIZED VIEW IF EXISTS atlas.vm_observations_mailles ;
 CREATE MATERIALIZED VIEW atlas.vm_observations_mailles AS
  with distinct_obs as (
   select
