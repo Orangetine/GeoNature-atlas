@@ -27,7 +27,7 @@
                         {% else %}
                         {% if configuration.REDIMENSIONNEMENT_IMAGE %}
                         {% set img_path =
-                        configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+obs.id_media|string+'?h=80&w=80' %}
+                        configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+obs.id_media|string+'?h=500&w=500' %}
                         {% else %}
                         {% set img_path = obs.pathImg %}
 

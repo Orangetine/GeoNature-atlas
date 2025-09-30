@@ -22,7 +22,7 @@
                     {% endif %}
 
                 {% if configuration.REDIMENSIONNEMENT_IMAGE %}
-                    {% set img_path = configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+photo.id_media|string+'?h=500' %}
+                    {% set img_path = configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+photo.id_media|string+'?h=500&w=500' %}
                 {% else %}
                     {% set img_path = photo.path %}
                 {% endif %}

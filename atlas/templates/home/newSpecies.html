@@ -17,7 +17,7 @@
                 <div class="card my-shadow mb-2">
                     {% if species.media_path != None %}
                         {% if configuration.REDIMENSIONNEMENT_IMAGE %}
-                            {% set img_path = configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+species.id_media|string+'?h=500' %}
+                            {% set img_path = configuration.TAXHUB_URL+'/api/tmedias/thumbnail/'+species.id_media|string+'?h=500&w=500' %}
                         {% else %}
                             {% set img_path = species.media_path %}
                     {% endif %}
