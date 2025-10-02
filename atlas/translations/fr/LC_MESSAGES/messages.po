@@ -414,7 +414,7 @@ msgstr "En savoir plus"
 
 #: templates/speciesSheet/blocInfos.html:19
 msgid "environment"
-msgstr "Milieu"
+msgstr "Écologie & habitats"
 
 #: templates/speciesSheet/blocInfos.html:20
 msgid "repartition"
