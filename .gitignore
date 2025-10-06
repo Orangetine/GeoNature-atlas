@@ -56,3 +56,4 @@ avanced_stat_btn.html
 .tox
 *.swp
 *.swo
+*.db
