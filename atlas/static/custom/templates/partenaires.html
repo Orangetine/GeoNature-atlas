@@ -10,14 +10,13 @@
         <meta charset="utf-8" />
         <title>Présentation de l'atlas | {{configuration.NOM_APPLICATION}} - {{configuration.STRUCTURE}}</title>
 
-
 		{% include "templates/core/assets_header.html" %}
 		<!-- Additional assets -->
 		{% block additionalHeaderAssets %}
 		{% endblock %}
 		{% block metaTags %}{% endblock %}
 
-		  <!-- Jquery -->
+		<!-- Jquery -->
         <script type=text/javascript src="{{url_for('static', filename='lib/jquery-1.12.4.min.js') }}"></script>
 		<script type=text/javascript src="{{url_for('static', filename='lib/jquery-ui.min.js') }}"></script>
         <link rel="stylesheet" href="{{url_for('static', filename='lib/jquery-ui.css') }}" />
@@ -31,7 +30,6 @@
         <link rel="stylesheet" href="{{url_for('static', filename='css/atlas.css') }}" />
         <link rel="stylesheet" href="{{url_for('static', filename='css/staticPages.css') }}" />
         <link rel="stylesheet" href="{{url_for('static', filename='custom/custom.css') }}" />
-
 </head>
 
 <body class="page-partenaires">
@@ -42,97 +40,97 @@
 <sidebar id="sideBar">
     {% include 'templates/core/sideBar.html' %}
 </sidebar>
+
 <main class="d-flex">
     <div class="container-fluid" id="page">
 
-            <div class="container partenaires">
-				<div class="row">
-				  <div class="col-lg-12">
-					  <!-- Texte de présentation général -->
-					  <h3 class="featurette-heading" style="text-align: center;">Partenaires </h3>
-					  <div class="featurette">
-						<p class="lead" style="text-align: justify;">
-							Ce projet d’Atlas est soutenu financièrement par la DRIEAT (Direction régionale et interdépartementale de l’environnement, 
-							de l’aménagement et des transports) et la Région Île-de-France dans le cadre du Système d’Informations de l’iNventaire du Patrimoine naturel 
-							<a href="https://geonature.arb-idf.fr/le-systeme-dinformation-de-linventaire-du-patrimoine-naturel-sinp" target="_blank">(SINP)</a>.
-						</p>
-						<p class="lead" style="text-align: justify;">
-							Son contenu repose sur les contributions des structures partenaires des Atlas telles que l’Office pour les insectes et leur environnement (Opie), 
-							la Société Herpétologique de France (SHF), la Société Française pour l’Étude et la Protection des Mammifères de (SFEPM) ou des naturalistes indépendants 
-							tel que Pierre Tillier ou Thomas Bitsch. Ainsi que sur les données de l’ensemble des structures partenaires et naturalistes indépendants contributeurs, 
-							représentés par les membres du Comité de coordination de la base de données franciliennes, GeoNat’îdF. 
-							A noter également la participation du Conservatoire Botanique National du Bassin Parisien (CBNBP), 
-							dont les données Flore, collectées et administrées dans la base Lobelia, abondent à GeoNat’îdF. 
-						</p>
-					  </div>	
-				  </div>
-				</div>
-				<div class="row">
-					<div class="col-lg-12">
-						<h3 class="featurette-heading" style="text-align: center;">Membres du Comité de coordination </h3>
-					</div>
-				</div>
-				<div class="featurette">
-					<div class="row">
-
-							<div class="col-xs-6 col-md-3"><a href="http://www.aev-iledefrance.fr/" target="_blank"><img alt="Logo Agence des Espaces verts" data-align="center" data-entity-type="file" data-entity-uuid="4491f2ca-b801-42ac-ac38-5575397edc76" height="117" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoAEV_0.jpg" width="117" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.arb-idf.fr/" target="_blank"><img alt="LogoARBidF" data-align="center" data-entity-type="file" data-entity-uuid="13a37802-dc28-4e72-9191-9c058529fca9" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoARBidF.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="https://www.anvl.fr/" target="_blank"><img alt="Logo ANVL" data-align="center" data-entity-type="file" data-entity-uuid="3348ec94-10a6-467c-9bca-07f31834cdf7" height="122" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoANVL.jpg" width="122" /></a></div>
-
-							<div class="col-xs-6 col-md-3"><a href="https://azimut230.fr/" rel=" noopener" target="_blank"><img alt="Azimut230" data-align="center" data-entity-type="file" data-entity-uuid="d2949d7a-ef62-4154-88db-c4ddf79e8c7e" height="142" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/LogoAzimut230.jpg" width="142" /></a></div>
-					</div>
-					<div class="row">
-							<div class="col-xs-6 col-md-3"><a href="http://cbnbp.mnhn.fr/cbnbp/" target="_blank"><img alt="Logo CBNBP" data-align="center" data-entity-type="file" data-entity-uuid="90b9ca9e-dbeb-4ccb-bbb2-528189da1dcd" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logocbnbp.jpg" /></a></div>
-
-
-							<div class="col-xs-6 col-md-3"><a href="https://www.seine-et-marne.fr/" target="_blank"><img alt="Logo CD77" data-align="center" data-entity-type="file" data-entity-uuid="1a762ed2-9720-495f-9ffd-9bfe9cfd0871" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoCD77.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="https://www.yvelines.fr/" rel=" noopener" target="_blank"><img alt="Logo CD78" data-align="center" data-entity-type="file" data-entity-uuid="3859e69a-0025-41c9-9c05-250646904781" height="142" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoCD78.jpg" width="142" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.essonne.fr/" target="_blank"><img alt="Logo CD91" data-align="center" data-entity-type="file" data-entity-uuid="c252a4a7-96cf-43cb-9995-d1dace862c3c" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoCD91.jpg" /></a></div>
-					</div>
-					<div class="row">
-							<div class="col-xs-6 col-md-3"><a href="https://www.hauts-de-seine.fr/" target="_blank"><img alt="Logo CD92" data-align="center" data-entity-type="file" data-entity-uuid="bad0158b-fcca-44da-bf9c-07b1c67d475f" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoCD92.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.valdoise.fr/" target="_blank"><img alt="Logo CD95" data-align="center" data-entity-type="file" data-entity-uuid="ebb8ff39-a9f7-4524-8748-7060555358c4" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoCD95.jpg" /></a></div>
-
-
-							<div class="col-xs-6 col-md-3"><a href="http://www.driee.ile-de-france.developpement-durable.gouv.fr/" target="_blank"><img alt="Logo Driee îdF" data-align="center" data-entity-type="file" data-entity-uuid="66d6ad2f-791a-4f1f-a194-0c835a9a4c66" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoPrefetRegionidF.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.federationpeche77.fr/" target="_blank"><img alt="Fédération de pêche de Seine-et-Marne" data-align="center" data-entity-type="file" data-entity-uuid="992db0cd-1424-4c77-82fc-3cab4ba50b8c" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoFedePeche77.jpg" /></a></div>
-					</div>
-					<div class="row">
-							<div class="col-xs-6 col-md-3"><a href="https://www.naturessonne.fr/" target="_blank"><img alt="Logo NaturEssonne" data-align="center" data-entity-type="file" data-entity-uuid="69a2015a-849d-4e51-9f67-76485c5223f6" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoNaturEssonne.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="https://ofb.gouv.fr/" rel=" noopener" target="_blank"><img alt="Logo OFB" data-align="center" data-entity-type="file" data-entity-uuid="962e9f3b-f01e-4157-8739-71f81f56c796" height="141" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoOFB.jpg" width="141" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.insectes.org/opie/monde-des-insectes.html" target="_blank"><img alt="Logo OPIE" data-align="center" data-entity-type="file" data-entity-uuid="b6aa8274-e373-4430-ae30-2ebbc42cf3d9" height="121" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoOPIE_0.jpg" width="121" /></a></div>
-
-
-							<div class="col-xs-6 col-md-3"><a href="https://www.parc-naturel-chevreuse.fr/" target="_blank"><img alt="Logo PNR de la Haute Vallée de Chevreuse" data-align="center" data-entity-type="file" data-entity-uuid="7fe334ac-df0f-4644-82e7-eaae815d0106" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logopnrchevreuse.jpg" /></a></div>
-					</div>
-					<div class="row">
-							<div class="col-xs-6 col-md-3"><a href="https://www.iledefrance.fr/" target="_blank"><img alt="Logo Région Île-de-France" data-align="center" data-entity-type="file" data-entity-uuid="519c2514-5192-4af3-93b5-eec1f98f9747" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoRegionidF_0.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.reserves-naturelles.org/" target="_blank"><img alt="Logo Réserves naturelles de France" data-align="center" data-entity-type="file" data-entity-uuid="8bf6ad65-21e6-4c76-b1de-a7b674fa74c3" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoRNF.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="https://programme-roseliere.fr/node/14" rel=" noopener" target="_blank"><img alt="Logo Roseliere" data-align="center" data-entity-type="file" data-entity-uuid="3ad2b7d3-2e64-411c-83f4-a403c6ec2569" height="133" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoRoseliere.jpg" width="133" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.me77.fr/" target="_blank"><img alt="Logo Seine-et-Marne Environnement" data-align="center" data-entity-type="file" data-entity-uuid="28ac636a-f39c-4349-b21c-e35e95a5ace0" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoSME.jpg" /></a></div>
-					</div>
-					<div class="row">
-
-							<div class="col-xs-6 col-md-3"><a href="https://france-orchidees.org/" rel=" noopener" target="_blank"><img alt="Logo Société française orchidophilie" data-align="center" data-entity-type="file" data-entity-uuid="a1d08f82-b6c9-4c05-bfd3-94f740998d45" height="144" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoSFO_0.jpg" width="144" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://lashf.org/" target="_blank"><img alt="Logo Société Herpétologique de France" data-align="center" data-entity-type="file" data-entity-uuid="36b31d63-af99-4065-83a3-6efc41df5d83" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoSHF_0.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="https://www.syndicatdelorge.fr/" target="_blank"><img alt="Logo Sivoa" data-align="center" data-entity-type="file" data-entity-uuid="6be2e033-de4e-48ff-ac02-46d9859ffa6e" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoSivoa.jpg" /></a></div>
-							<div class="col-xs-6 col-md-3"><a href="http://www.vigienature.fr/" target="_blank"><img alt="Logo Vigie-Nature" data-align="center" data-entity-type="file" data-entity-uuid="dce7186c-bd1d-49c9-b1f8-cdcf11c9a999" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logovigienature.jpg" /></a></div>
-					</div>
-					<div class="row">
-							<div class="col-xs-6 col-md-3"><a href="https://www.paris.fr/" target="_blank"><img alt="Logo Ville de Paris" data-align="center" data-entity-type="file" data-entity-uuid="12b3e1f2-db19-442b-997e-48ea29152077" height="150" src="https://geonature.arb-idf.fr/sites/default/files/inline-images/logoVilleDeParis.jpg" /></a></div>
-
-					</div>
-					<div class="row">
-						<div class="col-lg-12 text-center">
-						<a class="btn btn-success btn-lg partenaires-link" 
-							href="https://geonature-dev.arb-idf.fr/partenaires" 
-							target="_blank">
-							🌍 Retrouvez la page partenaires de GeoNat’îdF
-						</a>
-						</div>
-					</div>				  
-				</div>
+        <div class="container partenaires">
+            <div class="row">
+                <div class="col-lg-12">
+					<!-- Texte de présentation général -->
+                    <h3 class="featurette-heading" style="text-align: center;">Partenaires</h3>
+                    <div class="featurette">
+                        <p class="lead" style="text-align: justify;">
+                            Ce projet d’Atlas est soutenu financièrement par la DRIEAT (Direction régionale et interdépartementale de l’environnement, 
+                            de l’aménagement et des transports) et la Région Île-de-France dans le cadre du Système d’Informations de l’iNventaire du Patrimoine naturel 
+                            <a href="https://geonature.arb-idf.fr/le-systeme-dinformation-de-linventaire-du-patrimoine-naturel-sinp" target="_blank">(SINP)</a>.
+                        </p>
+                        <p class="lead" style="text-align: justify;">
+                            Son contenu repose sur les contributions des structures partenaires des Atlas telles que l’Office pour les insectes et leur environnement (Opie), 
+                            la Société Herpétologique de France (SHF), la Société Française pour l’Étude et la Protection des Mammifères (SFEPM) ou des naturalistes indépendants 
+                            tels que Pierre Tillier ou Thomas Bitsch. Ainsi que sur les données de l’ensemble des structures partenaires et naturalistes indépendants contributeurs, 
+                            représentés par les membres du Comité de coordination de la base de données franciliennes, GeoNat’îdF. 
+                            À noter également la participation du Conservatoire Botanique National du Bassin Parisien (CBNBP), 
+                            dont les données Flore, collectées et administrées dans la base Lobelia, abondent à GeoNat’îdF. 
+                        </p>
+                    </div>	
+                </div>
             </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="featurette-heading" style="text-align: center;">Membres du Comité de coordination</h3>
+                </div>
+            </div>
+
+            <div class="featurette">
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://www.iledefrance-nature.fr/" target="_blank" rel="noopener noreferrer"><img alt="Île-de-France Nature" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoIDFN.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.arb-idf.fr/" target="_blank"rel="noopener noreferrer"><img alt="Agence régionale de la Biodiversité d'Île-de-France" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_ARB.jpg"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.anvl.fr/" target="_blank" rel="noopener noreferrer"><img alt="Association Naturaliste de la Vallée du Loing et du massif de Fontainebleau" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_anlv.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://azimut230.fr/" target="_blank" rel="noopener noreferrer"><img alt="Azimut230" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/azimut230_logo.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="http://cbnbp.mnhn.fr/cbnbp/" target="_blank" rel="noopener noreferrer"><img alt="Conservatoire Botanique national du bassin parisien" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/CBNBP.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.seine-et-marne.fr/" target="_blank" rel="noopener noreferrer"><img alt="Seine-et-Marne CD77" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement77.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.yvelines.fr/" target="_blank" rel="noopener noreferrer"><img alt="Yvelines CD78" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement78.jpg"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.essonne.fr/" target="_blank" rel="noopener noreferrer"><img alt="Essone CD91" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement91.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://www.hauts-de-seine.fr/" target="_blank" rel="noopener noreferrer"><img alt="Hauts-de-seine CD92" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement92.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.valdoise.fr/" target="_blank" rel="noopener noreferrer"><img alt="Val d'Oise CD95" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement95.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.drieat.ile-de-france.developpement-durable.gouv.fr/" target="_blank" rel="noopener noreferrer"><img alt="Direction régionale et interdépartementale de l'Environnement, de l'Aménagement et des Transports d'Île-de-France" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/drieat_logo.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.federationpeche77.fr/" target="_blank" rel="noopener noreferrer"><img alt="Fédération de pêche 77" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_federation_peche_77.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://www.naturessonne.fr/" target="_blank" rel="noopener noreferrer"><img alt="NaturEssonne" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_nature_essone.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://ofb.gouv.fr/" target="_blank" rel="noopener noreferrer"><img alt="Office français de la Biodiversité" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/OFB_logo.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.insectes.org/" target="_blank" rel="noopener noreferrer"><img alt="Office pour les insectes et leur environnement" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/opie_logo.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.parc-naturel-chevreuse.fr/" target="_blank" rel="noopener noreferrer"><img alt="Parc naturel régional de la Haute Vallée de Chevreuse" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_chevreuse.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://www.iledefrance.fr/" target="_blank" rel="noopener noreferrer"><img alt="Région Île-de-France" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/region_idf_logo.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.reserves-naturelles.org/" target="_blank" rel="noopener noreferrer"><img alt="Réserves naturelles de France" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_reserves_naturelles_france.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://programme-roseliere.fr/" target="_blank" rel="noopener noreferrer"><img alt="Roselière" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_roseliere.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://www.seine-et-marne-environnement.fr/" target="_blank" rel="noopener noreferrer"><img alt="Seine-et-Marne Environnement" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_seine_marne_envrt.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://france-orchidees.org/" target="_blank" rel="noopener noreferrer"><img alt="Société française d'orchidophilie" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_SFO.jpg"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="http://lashf.org/" target="_blank" rel="noopener noreferrer"><img alt="Société Herpétologique de France" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/SHF_logo.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.syndicatdelorge.fr/" target="_blank" rel="noopener noreferrer"><img alt="Syndicat de l'orge" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/logo_syndicat_orge.png"></a></div>
+                    <div class="col-xs-6 col-md-3"><a href="https://www.mnhn.fr/" target="_blank" rel="noopener noreferrer"><img alt="Museum national d'Histoire naturelle" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/MNHN-logo.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3"><a href="https://www.paris.fr/" target="_blank" rel="noopener noreferrer"><img alt="Logo Ville de Paris" src="https://geonature.arb-idf.fr/atlas_172/static/custom/images/partenaires/LogoDepartement75.png"></a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <a class="btn btn-success btn-lg partenaires-link" href="https://geonature-dev.arb-idf.fr/partenaires" target="_blank" rel="noopener noreferrer">
+                            🌍 Retrouvez la page partenaires de GeoNat’îdF
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 </main>
 
