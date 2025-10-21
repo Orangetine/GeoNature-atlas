@@ -366,36 +366,38 @@ def sitemap():
     pages = []
     ten_days_ago = datetime.now() - timedelta(days=10)
     session = db.session
-    connection = db.engine.connect()
-    url_root = request.url_root
-    if url_root[-1] == "/":
-        url_root = url_root[:-1]
-    for rule in current_app.url_map.iter_rules():
-        # check for a 'GET' request and that the length of arguments is = 0 and if you have an admin area that the rule does not start with '/admin'
-        if "GET" in rule.methods and len(rule.arguments) == 0 and not rule.rule.startswith("/api"):
-            pages.append([url_root + rule.rule, ten_days_ago])
+    try:
+        url_root = request.url_root
+        if url_root[-1] == "/":
+            url_root = url_root[:-1]
+        for rule in current_app.url_map.iter_rules():
+            # check for a 'GET' request and that the length of arguments is = 0 and if you have an admin area that the rule does not start with '/admin'
+            if "GET" in rule.methods and len(rule.arguments) == 0 and not rule.rule.startswith("/api"):
+                pages.append([url_root + rule.rule, ten_days_ago])
 
-    # get dynamic routes for blog
-    species = session.query(vmTaxons.VmTaxons).order_by(vmTaxons.VmTaxons.cd_ref).all()
-    for species in species:
-        url = url_root + url_for("main.ficheEspece", cd_nom=species.cd_ref)
-        modified_time = ten_days_ago
-        pages.append([url, modified_time])
+        # get dynamic routes for blog
+        species = session.query(vmTaxons.VmTaxons).order_by(vmTaxons.VmTaxons.cd_ref).all()
+        for species in species:
+            url = url_root + url_for("main.ficheEspece", cd_nom=species.cd_ref)
+            modified_time = ten_days_ago
+            pages.append([url, modified_time])
 
-    municipalities = (
-        session.query(vmCommunes.VmCommunes).order_by(vmCommunes.VmCommunes.insee).all()
-    )
-    for municipalitie in municipalities:
-        url = url_root + url_for("main.ficheCommune", insee=municipalitie.insee)
-        modified_time = ten_days_ago
-        pages.append([url, modified_time])
+        municipalities = (
+            session.query(vmCommunes.VmCommunes).order_by(vmCommunes.VmCommunes.insee).all()
+        )
+        for municipalitie in municipalities:
+            url = url_root + url_for("main.ficheCommune", insee=municipalitie.insee)
+            modified_time = ten_days_ago
+            pages.append([url, modified_time])
 
-    sitemap_template = render_template(
-        "templates/sitemap.xml", pages=pages, url_root=url_root, last_modified=ten_days_ago
-    )
-    response = make_response(sitemap_template)
-    response.headers["Content-Type"] = "application/xml"
-    return response
+        sitemap_template = render_template(
+            "templates/sitemap.xml", pages=pages, url_root=url_root, last_modified=ten_days_ago
+        )
+        response = make_response(sitemap_template)
+        response.headers["Content-Type"] = "application/xml"
+        return response
+    finally: 
+        session.close()
 
 
 @main.route("/robots.txt", methods=["GET"])

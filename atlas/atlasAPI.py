@@ -156,14 +156,14 @@ def getPhotosGallery():
 @api.route("/main_stat", methods=["GET"])
 @cache.cached()
 def main_stat():
-    connection = db.engine.connect()
-    return vmObservationsRepository.statIndex(connection)
+    with db.engine.connect() as connection:
+        return vmObservationsRepository.statIndex(connection)
 
 
 @api.route("/rank_stat", methods=["GET"])
 @cache.cached()
 def rank_stat():
-    connection = db.engine.connect()
-    return jsonify(
-        vmObservationsRepository.genericStat(connection, current_app.config["RANG_STAT"])
-    )
+    with db.engine.connect() as connection:
+        return jsonify(
+            vmObservationsRepository.genericStat(connection, current_app.config["RANG_STAT"])
+        )
