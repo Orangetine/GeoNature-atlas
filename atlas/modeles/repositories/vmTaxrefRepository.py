@@ -132,13 +132,15 @@ def getCd_sup(session, cd_ref):
 
 
 def getInfoFromCd_ref(session, cd_ref):
-    req = (
+    row = (
         session.query(VmTaxref.lb_nom, TBibTaxrefRang.nom_rang)
         .join(TBibTaxrefRang, TBibTaxrefRang.id_rang == VmTaxref.id_rang)
         .filter(VmTaxref.cd_ref == cd_ref)
+        .first()
     )
-
-    return {"lb_nom": req[0].lb_nom, "nom_rang": req[0].nom_rang}
+    if row is None:
+        return None 
+    return {"lb_nom": row.lb_nom, "nom_rang": row.nom_rang}
 
 
 def getAllTaxonomy(session, cd_ref):
