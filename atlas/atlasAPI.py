@@ -17,21 +17,19 @@ api = Blueprint("api", __name__)
 
 @api.route("/searchTaxon", methods=["GET"])
 def searchTaxonAPI():
-    session = db.session
-    search = request.args.get("search", "")
-    limit = request.args.get("limit", 50)
-    results = vmSearchTaxonRepository.searchTaxons(session, search, limit)
-    session.close()
+    with db.session() as session:
+        search = request.args.get("search", "")
+        limit = request.args.get("limit", 50)
+        results = vmSearchTaxonRepository.searchTaxons(session, search, limit)
     return jsonify(results)
 
 
 @api.route("/searchCommune", methods=["GET"])
 def searchCommuneAPI():
-    session = db.session
-    search = request.args.get("search", "")
-    limit = request.args.get("limit", 50)
-    results = vmCommunesRepository.searchMunicipalities(session, search, limit)
-    session.close()
+    with db.session() as session:
+        search = request.args.get("search", "")
+        limit = request.args.get("limit", 50)
+        results = vmCommunesRepository.searchMunicipalities(session, search, limit)
     return jsonify(results)
 
 
@@ -44,14 +42,13 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
 
         :returns: dict ({'point:<GeoJson>', 'maille': 'GeoJson})
         """
-        session = db.session
-        observations = {
-            "point": vmObservationsRepository.searchObservationsChilds(session, cd_ref),
-            "maille": vmObservationsMaillesRepository.getObservationsMaillesChilds(
-                session, cd_ref
-            ),
-        }
-        session.close()
+        with db.session() as session:
+            observations = {
+                "point": vmObservationsRepository.searchObservationsChilds(session, cd_ref),
+                "maille": vmObservationsMaillesRepository.getObservationsMaillesChilds(
+                    session, cd_ref
+                ),
+            }
         return jsonify(observations)
 
 
@@ -62,14 +59,13 @@ def getObservationsMailleAPI(cd_ref):
 
     :returns: GeoJson
     """
-    session = db.session
-    observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
-        session,
-        cd_ref,
-        year_min=request.args.get("year_min"),
-        year_max=request.args.get("year_max"),
-    )
-    session.close()
+    with db.session() as session:
+        observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
+            session,
+            cd_ref,
+            year_min=request.args.get("year_min"),
+            year_max=request.args.get("year_max"),
+        )
     return jsonify(observations)
 
 
@@ -77,9 +73,8 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
 
     @api.route("/observationsPoint/<int(signed=True):cd_ref>", methods=["GET"])
     def getObservationsPointAPI(cd_ref):
-        session = db.session
-        observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
-        session.close()
+        with db.session() as session:
+            observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
         return jsonify(observations)
 
 
@@ -93,18 +88,16 @@ def getObservationsGenericApi(cd_ref: int):
     Returns:
         [type]: [description]
     """
-    session = db.session
-    if current_app.config["AFFICHAGE_MAILLE"]:
-        observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
-            session,
-            cd_ref,
-            year_min=request.args.get("year_min"),
-            year_max=request.args.get("year_max"),
-        )
-    else:
-        observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
-    session.close()
-
+    with db.session() as session:
+        if current_app.config["AFFICHAGE_MAILLE"]:
+            observations = vmObservationsMaillesRepository.getObservationsMaillesChilds(
+                session,
+                cd_ref,
+                year_min=request.args.get("year_min"),
+                year_max=request.args.get("year_max"),
+            )
+        else:
+            observations = vmObservationsRepository.searchObservationsChilds(session, cd_ref)
     return jsonify(observations)
 
 
@@ -112,44 +105,40 @@ if not current_app.config["AFFICHAGE_MAILLE"]:
 
     @api.route("/observations/<insee>/<int(signed=True):cd_ref>", methods=["GET"])
     def getObservationsCommuneTaxonAPI(insee, cd_ref):
-        connection = db.engine.connect()
-        observations = vmObservationsRepository.getObservationTaxonCommune(
-            connection, insee, cd_ref
-        )
-        connection.close()
+        with db.engine.connect() as connection:
+            observations = vmObservationsRepository.getObservationTaxonCommune(
+                connection, insee, cd_ref
+            )
         return jsonify(observations)
 
 
 @api.route("/observationsMaille/<insee>/<int(signed=True):cd_ref>", methods=["GET"])
 def getObservationsCommuneTaxonMailleAPI(insee, cd_ref):
-    connection = db.engine.connect()
-    observations = vmObservationsMaillesRepository.getObservationsTaxonCommuneMaille(
-        connection, insee, cd_ref
-    )
-    connection.close()
+    with db.engine.connect() as connection:
+        observations = vmObservationsMaillesRepository.getObservationsTaxonCommuneMaille(
+            connection, insee, cd_ref
+        )
     return jsonify(observations)
 
 
 @api.route("/photoGroup/<group>", methods=["GET"])
 def getPhotosGroup(group):
-    connection = db.engine.connect()
-    photos = vmMedias.getPhotosGalleryByGroup(
-        connection,
-        current_app.config["ATTR_MAIN_PHOTO"],
-        current_app.config["ATTR_OTHER_PHOTO"],
-        group,
-    )
-    connection.close()
+    with db.engine.connect() as connection :
+        photos = vmMedias.getPhotosGalleryByGroup(
+            connection,
+            current_app.config["ATTR_MAIN_PHOTO"],
+            current_app.config["ATTR_OTHER_PHOTO"],
+            group,
+        )
     return jsonify(photos)
 
 
 @api.route("/photosGallery", methods=["GET"])
 def getPhotosGallery():
-    connection = db.engine.connect()
-    photos = vmMedias.getPhotosGallery(
-        connection, current_app.config["ATTR_MAIN_PHOTO"], current_app.config["ATTR_OTHER_PHOTO"]
-    )
-    connection.close()
+    with db.engine.connect() as connection:
+        photos = vmMedias.getPhotosGallery(
+            connection, current_app.config["ATTR_MAIN_PHOTO"], current_app.config["ATTR_OTHER_PHOTO"]
+        )
     return jsonify(photos)
 
 
