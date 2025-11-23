@@ -20,15 +20,4 @@
             </div>
         </div>
     {% endif %}
-    
-    {% if configuration.ORGANISM_MODULE %}
-        <div class="card mt-4" id="graphBloc">
-            <div class="card-body p-2">
-                <h4 class="title-bar title-spaced text-center fw-bold">{{ _('data.source') }}</h4>
-            </div>
-            <div class="chart-container" style="position: relative; height:400px; width:100%">
-                <canvas id="organismChart" style="padding: 0.5rem;"></canvas>
-            </div>
-        </div>
-    {% endif %}
 {% endblock %}

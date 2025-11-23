@@ -49,19 +49,9 @@
 {% endblock %}
 
 {% block content %}
-
-<div class="row p-0 m-0 border-bottom">
-    <div class="info_zone_card">
-        {% include 'templates/areaSheet/statArea.html' %}
-    </div>
-    {% if configuration.AFFICHAGE_TAB_AREA_GENERAL_PRESENTATION or configuration.AFFICHAGE_TAB_AREA_OBS_ESPECES or configuration.ORGANISM_MODULE %}
-        <div class="info_zone_card">
-            {% include 'templates/areaSheet/moreZoneInfo.html' %}
-        </div>
-    {% endif %}
-</div>
 <div class="specie_list_map_block flex-wrap">
     <div class="col-12 col-xl-4 col-lg-5 col-md-6 d-flex flex-column">
+        {% include 'templates/areaSheet/statArea.html' %}
         {% with context={"page": "area"} %}
             {% include 'templates/core/listTaxons.html' %}
         {% endwith %}

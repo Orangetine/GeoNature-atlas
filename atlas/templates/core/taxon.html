@@ -1,8 +1,6 @@
 {% for taxon in listTaxons %}
     <li id="taxonListItem"
-        class="d-flex border-bottom p-2
-                {% if (configuration.AFFICHAGE_MENACE and taxon.menace) %} border border-danger bg-danger-subtle
-                {% endif %}"
+        class="d-flex border-bottom p-2"
         id="taxonListItem" 
         area-code="{{ id_area }}"
         cdRef="{{ taxon.cd_ref }}"
@@ -28,25 +26,6 @@
                              data-bs-placement="left" data-bs-toggle="tooltip"
                              title="{{ _('this.taxon.has.a.protected.status') }}" alt=" " />
                     </a>
-                {% endif %}
-            {% endif %}
-
-            {% if configuration.DISPLAY_PATRIMONIALITE %}
-                {% if taxon.patrimonial in configuration.PATRIMONIALITE.config %}
-                    <img src="{{ url_for('static', filename=configuration.PATRIMONIALITE.config[taxon.patrimonial].icon) }}"
-                         style="width: 30px; height: 30px"
-                         data-bs-placement="left" data-bs-toggle="tooltip"
-                         title="{{ configuration.PATRIMONIALITE.config[taxon.patrimonial].text }}"
-                         alt=" " />
-                {% endif %}
-            {% endif %}
-            {% if configuration.AFFICHAGE_MENACE %}
-                {% if taxon.menace %}
-                    <img src="{{ url_for('static', filename='images/picto_menace.png') }}"
-                         alt="{{ _('threatened') }}"
-                         style="width:30px; height:30px;"
-                         data-bs-toggle="tooltip"
-                         title="{{ _('threatened.' ~ taxon.menace) }} - {{taxon.niveau_application_menace}}" />
                 {% endif %}
             {% endif %}
         </span>

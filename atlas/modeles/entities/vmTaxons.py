@@ -67,7 +67,7 @@ class VmTaxons(db.Model):
             d["media"] = self.get_main_media()
         return d
 
-    def get_main_media(self, size=(80,80)):
+    def get_main_media(self, size=(500,500)):
         """Get main image of default logo
 
         Parameters

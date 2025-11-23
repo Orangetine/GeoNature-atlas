@@ -49,6 +49,7 @@ def getAreaFromIdArea(id_area):
     area = (
         db.session.query(
             VmAreas.area_name,
+            VmAreas.area_code,
             VmAreas.id_area,
             VmAreas.description,
             VmAreas.area_geojson,
@@ -64,6 +65,7 @@ def getAreaFromIdArea(id_area):
     area_dict = {
         "areaName": area.area_name,
         "areaCode": str(area.id_area),
+        "areaCodeReal": str(area.area_code),
         "areaGeoJson": ast.literal_eval(area.area_geojson),
         "typeName": area.type_name,
         "description": area.description,

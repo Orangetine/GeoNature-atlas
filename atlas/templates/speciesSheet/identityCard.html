@@ -67,24 +67,6 @@
                 </div>
 
                 <div id="statuts-and-links-container">
-                    {% if taxon.taxonSearch.protection_stricte %}
-                        <a href="https://inpn.mnhn.fr/espece/cd_nom/{{ taxon.taxonSearch.cd_ref }}/tab/statut" target="_blank">
-                            <img class="caractEspece" width="100px"
-                                 src="{{ url_for('static', filename='images/logo_protection.png') }}"
-                                 data-bs-toggle="tooltip"
-                                 title="{{ _('this.taxon.has.a.protected.status') }}"
-                                 data-bs-placement="right">
-                        </a>
-                    {% endif %}
-
-                    {% if configuration.DISPLAY_PATRIMONIALITE and taxon.taxonSearch.patrimonial in configuration.PATRIMONIALITE.config %}
-                        <img class="caractEspece" width="130px"
-                             src="{{ url_for('static', filename=configuration.PATRIMONIALITE.config[taxon.taxonSearch.patrimonial].icon) }}"
-                             data-bs-toggle="tooltip"
-                             title="{{ configuration.PATRIMONIALITE.config[taxon.taxonSearch.patrimonial].text }}"
-                             data-bs-placement="right">
-                    {% endif %}
-
                     <div id="inpnLink">
                         <a href="https://inpn.mnhn.fr/espece/cd_nom/{{ taxon.taxonSearch.cd_ref }}" target="_blank">
                             <img width="90px"
@@ -95,10 +77,6 @@
                         </a>
                     </div>
                 </div>
-
-                {% if configuration.AFFICHAGE_STATUTS and groupesStatuts|length != 0 %}
-                    {% include 'static/custom/templates/statuts.html' %}
-                {% endif %}
 
                 {% if taxon.listTaxonsChild|length > 0 %}
                     <!-- Button trigger modal -->
