@@ -73,7 +73,7 @@ CREATE MATERIALIZED VIEW atlas.vm_l_areas AS
         a.geom as geom_local,
         st_transform(a.geom, 4326) AS the_geom,
         st_asgeojson(st_transform(a.geom, 4326)) AS area_geojson,
-        a.description AS "description"
+        ''::text AS "description"
     FROM ref_geo.l_areas AS a
         JOIN ref_geo.bib_areas_types AS bat
             ON a.id_type = bat.id_type
